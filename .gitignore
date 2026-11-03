@@ -1,0 +1,19 @@
+# Python / Virtual Environment
+backend/venv/
+*.pyc
+__pycache__/
+
+# Database 
+*.sqlite3
+
+# Environment variables
+.env
+
+# IDE / VS Code
+.vscode/
+*.code-workspace
+
+# Node / Frontend 
+frontend/node_modules/
+frontend/dist/
+frontend/build/
