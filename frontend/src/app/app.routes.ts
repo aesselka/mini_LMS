@@ -1,12 +1,26 @@
 import { Routes } from '@angular/router';
+
 import { CourseList } from './catalog/course-list/course-list';
-import { MyCourses } from './catalog/my-courses/my-courses';
 import { CourseDetail } from './catalog/course-detail/course-detail';
+import { MyCourses } from './catalog/my-courses/my-courses';
+
+import { Login } from './pages/login/login';
+import { Profile } from './pages/profile/profile';
+import { Register } from './pages/register/register';
+import { authGuard, guestGuard } from './services/auth.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'courses' },
-  { path: 'courses', component: CourseList },
-  { path: 'my-courses', component: MyCourses },
-  { path: 'courses/:id', component: CourseDetail },
-  // /login and /register routes are added by the Login/Register author (feature/frontend-setup)
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
+
+  { path: 'login', component: Login, canActivate: [guestGuard] },
+  { path: 'register', component: Register, canActivate: [guestGuard] },
+  { path: 'profile', component: Profile, canActivate: [authGuard] },
+
+  { path: 'courses', component: CourseList, canActivate: [authGuard] },
+  { path: 'courses/:id', component: CourseDetail, canActivate: [authGuard] },
+  { path: 'my-courses', component: MyCourses, canActivate: [authGuard] },
+
+  { path: '**', redirectTo: '' },
 ];
+
+

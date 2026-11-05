@@ -1,0 +1,64 @@
+<section class="card">
+  <h1>{{ 'register.title' | t }}</h1>
+
+  <form (ngSubmit)="submit()" novalidate>
+    <div class="row">
+      <label>
+        {{ 'fields.firstName' | t }}
+        <input name="first_name" [(ngModel)]="form.first_name" autocomplete="given-name" />
+      </label>
+      <label>
+        {{ 'fields.lastName' | t }}
+        <input name="last_name" [(ngModel)]="form.last_name" autocomplete="family-name" />
+      </label>
+    </div>
+
+    <label>
+      {{ 'fields.username' | t }} *
+      <input name="username" [(ngModel)]="form.username" autocomplete="username" />
+    </label>
+
+    <label>
+      {{ 'fields.email' | t }} *
+      <input name="email" type="email" [(ngModel)]="form.email" autocomplete="email" />
+    </label>
+
+    <label>
+      {{ 'fields.password' | t }} *
+      <input name="password" type="password" [(ngModel)]="form.password" autocomplete="new-password" />
+    </label>
+
+    <label>
+      {{ 'fields.confirmPassword' | t }} *
+      <input name="confirmPassword" type="password" [(ngModel)]="confirmPassword" autocomplete="new-password" />
+    </label>
+
+    <label>
+      {{ 'fields.role' | t }}
+      <select name="role" [(ngModel)]="form.role">
+        <option value="student">{{ 'roles.student' | t }}</option>
+        <option value="teacher">{{ 'roles.teacher' | t }}</option>
+      </select>
+    </label>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() | t }}</p>
+    }
+    @if (serverErrors().length) {
+      <ul class="error" role="alert">
+        @for (msg of serverErrors(); track msg) {
+          <li>{{ msg }}</li>
+        }
+      </ul>
+    }
+
+    <button type="submit" class="btn" [disabled]="loading()">
+      {{ (loading() ? 'common.loading' : 'register.submit') | t }}
+    </button>
+  </form>
+
+  <p class="hint">
+    {{ 'register.haveAccount' | t }}
+    <a routerLink="/login">{{ 'register.loginLink' | t }}</a>
+  </p>
+</section>

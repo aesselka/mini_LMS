@@ -1,0 +1,44 @@
+{
+  "nav.login": "Log in",
+  "nav.register": "Sign up",
+  "nav.profile": "Profile",
+  "nav.logout": "Log out",
+
+  "fields.username": "Username",
+  "fields.email": "Email",
+  "fields.password": "Password",
+  "fields.confirmPassword": "Confirm password",
+  "fields.firstName": "First name",
+  "fields.lastName": "Last name",
+  "fields.role": "Role",
+
+  "roles.student": "Student",
+  "roles.teacher": "Teacher",
+  "roles.admin": "Administrator",
+
+  "nav.courses": "Courses",
+  "nav.my_courses": "My courses",
+
+  "login.title": "Log in",
+  "login.submit": "Log in",
+  "login.noAccount": "Don't have an account?",
+  "login.registerLink": "Sign up",
+
+  "register.title": "Create an account",
+  "register.submit": "Sign up",
+  "register.haveAccount": "Already have an account?",
+  "register.loginLink": "Log in",
+
+  "profile.title": "My profile",
+  "profile.name": "Name",
+
+  "common.loading": "Loading...",
+
+  "errors.required": "Please fill in all required fields.",
+  "errors.invalidCredentials": "Wrong username or password.",
+  "errors.emailInvalid": "Please enter a valid email.",
+  "errors.passwordShort": "Password must be at least 8 characters.",
+  "errors.passwordMismatch": "Passwords do not match.",
+  "errors.network": "Server is not available. Is the backend running?",
+  "errors.unknown": "Something went wrong. Please try again."
+}

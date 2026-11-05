@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { API_URL } from '../core/api';
+import { API_URL } from '../services/api.config';
 import { Course, Enrollment } from './course';
 
 @Injectable({ providedIn: 'root' })

@@ -1,0 +1,44 @@
+{
+  "nav.login": "Войти",
+  "nav.register": "Регистрация",
+  "nav.profile": "Профиль",
+  "nav.logout": "Выйти",
+
+  "fields.username": "Имя пользователя",
+  "fields.email": "Email",
+  "fields.password": "Пароль",
+  "fields.confirmPassword": "Повторите пароль",
+  "fields.firstName": "Имя",
+  "fields.lastName": "Фамилия",
+  "fields.role": "Роль",
+
+  "roles.student": "Студент",
+  "roles.teacher": "Преподаватель",
+  "roles.admin": "Администратор",
+
+  "nav.courses": "Курсы",
+  "nav.my_courses": "Мои курсы",
+
+  "login.title": "Вход",
+  "login.submit": "Войти",
+  "login.noAccount": "Нет аккаунта?",
+  "login.registerLink": "Зарегистрироваться",
+
+  "register.title": "Регистрация",
+  "register.submit": "Зарегистрироваться",
+  "register.haveAccount": "Уже есть аккаунт?",
+  "register.loginLink": "Войти",
+
+  "profile.title": "Мой профиль",
+  "profile.name": "Имя",
+
+  "common.loading": "Загрузка...",
+
+  "errors.required": "Заполните все обязательные поля.",
+  "errors.invalidCredentials": "Неверное имя пользователя или пароль.",
+  "errors.emailInvalid": "Введите корректный email.",
+  "errors.passwordShort": "Пароль должен быть не короче 8 символов.",
+  "errors.passwordMismatch": "Пароли не совпадают.",
+  "errors.network": "Сервер недоступен. Запущен ли бэкенд?",
+  "errors.unknown": "Что-то пошло не так. Попробуйте ещё раз."
+}
