@@ -1,0 +1,28 @@
+<section class="card">
+  <h1>{{ 'login.title' | t }}</h1>
+
+  <form (ngSubmit)="submit()" novalidate>
+    <label>
+      {{ 'fields.username' | t }}
+      <input name="username" [(ngModel)]="username" autocomplete="username" />
+    </label>
+
+    <label>
+      {{ 'fields.password' | t }}
+      <input name="password" type="password" [(ngModel)]="password" autocomplete="current-password" />
+    </label>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() | t }}</p>
+    }
+
+    <button type="submit" class="btn" [disabled]="loading()">
+      {{ (loading() ? 'common.loading' : 'login.submit') | t }}
+    </button>
+  </form>
+
+  <p class="hint">
+    {{ 'login.noAccount' | t }}
+    <a routerLink="/register">{{ 'login.registerLink' | t }}</a>
+  </p>
+</section>

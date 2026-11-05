@@ -1,0 +1,27 @@
+<header class="header">
+  <a class="brand" routerLink="/">Mini LMS</a>
+
+  <nav class="nav">
+    <!-- Участник 4: сюда можно добавить ссылку на каталог курсов -->
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/profile" routerLinkActive="active">{{ 'nav.profile' | t }}</a>
+      <button type="button" class="link-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
+      <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>
+    }
+  </nav>
+
+  <div class="langs" role="group" aria-label="Language">
+    @for (lang of i18n.languages; track lang) {
+      <button
+        type="button"
+        [class.active]="i18n.lang() === lang"
+        [attr.aria-pressed]="i18n.lang() === lang"
+        (click)="i18n.use(lang)"
+      >
+        {{ lang.toUpperCase() }}
+      </button>
+    }
+  </div>
+</header>
