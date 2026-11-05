@@ -1,0 +1,26 @@
+:host { --accent: #4f46e5; --border: #e5e7eb; --muted: #6b7280; display: block; }
+.page { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; margin-bottom: 1.2rem; }
+.head h1 { margin: 0; font-size: 1.9rem; }
+.back, .state a, .title { color: var(--accent); text-decoration: none; font-weight: 600; }
+.back:hover, .state a:hover, .title:hover { text-decoration: underline; }
+.count { color: var(--muted); font-size: .9rem; margin: 0 0 .75rem; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
+.row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.2rem; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+.title { font-size: 1.05rem; display: block; margin-top: .4rem; }
+.code { font-size: .75rem; font-weight: 700; letter-spacing: .04em; color: var(--accent); background: #eef2ff; padding: .15rem .5rem; border-radius: 999px; }
+.meta { margin: .25rem 0 0; color: var(--muted); font-size: .9rem; }
+.side { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.grade { min-width: 2.2rem; text-align: center; font-weight: 700; padding: .3rem .6rem; border-radius: 8px; background: #f3f4f6; }
+.confirm { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-size: .9rem; }
+button { font: inherit; cursor: pointer; border-radius: 8px; padding: .4rem .8rem; }
+.plain { background: transparent; border: 1px solid var(--border); color: inherit; }
+.danger { background: #b91c1c; border: 1px solid #b91c1c; color: #fff; font-weight: 600; }
+button:disabled { opacity: .6; cursor: progress; }
+button:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 2px; }
+.state { padding: 2.5rem 1rem; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 14px; }
+.state.err, p.err { color: #b91c1c; }
+.state.err { border-color: #fecaca; background: #fef2f2; }
+.skeleton { min-height: 84px; background: linear-gradient(90deg, #f3f4f6 25%, #e9eaee 37%, #f3f4f6 63%); background-size: 400% 100%; animation: shimmer 1.4s infinite; }
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }

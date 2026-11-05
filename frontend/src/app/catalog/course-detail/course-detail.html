@@ -1,0 +1,24 @@
+<section class="page">
+  <a routerLink="/courses" class="back">&larr; All courses</a>
+
+  @if (loading()) {
+    <div class="skeleton" aria-busy="true" aria-label="Loading course"></div>
+  } @else if (error()) {
+    <div class="state" role="alert">{{ error() }}</div>
+  } @else {
+    @if (course(); as c) {
+      <article class="box">
+        <span class="code">{{ c.code }}</span>
+        <h1>{{ c.title }}</h1>
+        <dl class="facts">
+          <div><dt>Teacher</dt><dd>{{ teacherName(c.teacher) }}</dd></div>
+          <div><dt>Credits</dt><dd>{{ c.credits }}</dd></div>
+          <div><dt>Students</dt><dd>{{ c.students_count }}</dd></div>
+        </dl>
+        <h2>About this course</h2>
+        <p class="desc">{{ c.description || 'No description yet.' }}</p>
+        <app-enroll-button [courseId]="c.id" (enrolled)="onEnrolled()" />
+      </article>
+    }
+  }
+</section>
