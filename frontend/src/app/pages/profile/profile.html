@@ -1,0 +1,27 @@
+<section class="card">
+  <h1>{{ 'profile.title' | t }}</h1>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() | t }}</p>
+  }
+
+  @if (auth.user(); as user) {
+    <div class="avatar">{{ (user.first_name || user.username).charAt(0).toUpperCase() }}</div>
+
+    <dl class="info">
+      <dt>{{ 'profile.name' | t }}</dt>
+      <dd>{{ user.first_name }} {{ user.last_name }}</dd>
+
+      <dt>{{ 'fields.username' | t }}</dt>
+      <dd>{{ user.username }}</dd>
+
+      <dt>{{ 'fields.email' | t }}</dt>
+      <dd>{{ user.email || '—' }}</dd>
+
+      <dt>{{ 'fields.role' | t }}</dt>
+      <dd><span class="badge">{{ 'roles.' + user.role | t }}</span></dd>
+    </dl>
+  } @else {
+    <p>{{ 'common.loading' | t }}</p>
+  }
+</section>
