@@ -16,6 +16,9 @@
   "roles.teacher": "Оқытушы",
   "roles.admin": "Әкімші",
 
+  "nav.courses": "Курстар",
+  "nav.my_courses": "Менің курстарым",
+
   "login.title": "Жүйеге кіру",
   "login.submit": "Кіру",
   "login.noAccount": "Аккаунтыңыз жоқ па?",

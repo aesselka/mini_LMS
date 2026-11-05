@@ -1,0 +1,16 @@
+:host { --accent: #4f46e5; --border: #e5e7eb; --muted: #6b7280; display: block; }
+.page { max-width: 760px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.back { color: var(--accent); text-decoration: none; font-weight: 600; }
+.back:hover { text-decoration: underline; }
+.box { margin-top: 1rem; padding: 1.6rem; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+.code { font-size: .75rem; font-weight: 700; letter-spacing: .04em; color: var(--accent); background: #eef2ff; padding: .2rem .6rem; border-radius: 999px; }
+h1 { margin: .8rem 0 1rem; font-size: 1.8rem; }
+h2 { font-size: 1.05rem; margin: 1.5rem 0 .4rem; }
+.facts { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 0; }
+.facts dt { font-size: .8rem; color: var(--muted); }
+.facts dd { margin: 0; font-weight: 600; }
+.desc { line-height: 1.6; white-space: pre-line; margin: 0 0 1.5rem; }
+.state { margin-top: 1rem; padding: 2.5rem 1rem; text-align: center; color: #b91c1c; background: #fef2f2; border-radius: 14px; }
+.skeleton { margin-top: 1rem; min-height: 260px; border-radius: 16px; background: linear-gradient(90deg, #f3f4f6 25%, #e9eaee 37%, #f3f4f6 63%); background-size: 400% 100%; animation: shimmer 1.4s infinite; }
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }

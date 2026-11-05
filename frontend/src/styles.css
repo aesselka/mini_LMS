@@ -1,4 +1,7 @@
-/* Общие стили для всего приложения */
+ HEAD
+body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; color: #111827; }
+
+
 :root {
   --primary: #4f46e5;
   --primary-dark: #4338ca;
@@ -27,7 +30,7 @@ body {
   padding: 40px 16px;
 }
 
-/* Карточка с формой */
+
 .card {
   max-width: 440px;
   margin: 0 auto;
@@ -129,7 +132,7 @@ a {
   color: var(--primary);
 }
 
-/* Профиль */
+
 .avatar {
   width: 64px;
   height: 64px;
@@ -168,3 +171,4 @@ a {
   font-size: 13px;
   font-weight: 600;
 }
+

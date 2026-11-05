@@ -16,6 +16,9 @@
   "roles.teacher": "Teacher",
   "roles.admin": "Administrator",
 
+  "nav.courses": "Courses",
+  "nav.my_courses": "My courses",
+
   "login.title": "Log in",
   "login.submit": "Log in",
   "login.noAccount": "Don't have an account?",

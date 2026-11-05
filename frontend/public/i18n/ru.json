@@ -16,6 +16,9 @@
   "roles.teacher": "Преподаватель",
   "roles.admin": "Администратор",
 
+  "nav.courses": "Курсы",
+  "nav.my_courses": "Мои курсы",
+
   "login.title": "Вход",
   "login.submit": "Войти",
   "login.noAccount": "Нет аккаунта?",

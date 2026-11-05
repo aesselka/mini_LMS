@@ -2,15 +2,17 @@
   <a class="brand" routerLink="/">Mini LMS</a>
 
   <nav class="nav">
-    <!-- Участник 4: сюда можно добавить ссылку на каталог курсов -->
-    @if (auth.isLoggedIn()) {
-      <a routerLink="/profile" routerLinkActive="active">{{ 'nav.profile' | t }}</a>
-      <button type="button" class="link-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
-    } @else {
-      <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
-      <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>
-    }
-  </nav>
+  @if (auth.isLoggedIn()) {
+    <a routerLink="/courses" routerLinkActive="active">{{ 'nav.courses' | t }}</a>
+    <a routerLink="/my-courses" routerLinkActive="active">{{ 'nav.my_courses' | t }}</a>
+    <a routerLink="/profile" routerLinkActive="active">{{ 'nav.profile' | t }}</a>
+    <button type="button" class="link-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
+  } @else {
+    <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
+    <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>
+  }
+</nav>
+
 
   <div class="langs" role="group" aria-label="Language">
     @for (lang of i18n.languages; track lang) {
