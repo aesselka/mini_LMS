@@ -1,0 +1,41 @@
+{
+  "nav.login": "Кіру",
+  "nav.register": "Тіркелу",
+  "nav.profile": "Профиль",
+  "nav.logout": "Шығу",
+
+  "fields.username": "Пайдаланушы аты",
+  "fields.email": "Email",
+  "fields.password": "Құпиясөз",
+  "fields.confirmPassword": "Құпиясөзді қайталаңыз",
+  "fields.firstName": "Аты",
+  "fields.lastName": "Тегі",
+  "fields.role": "Рөлі",
+
+  "roles.student": "Студент",
+  "roles.teacher": "Оқытушы",
+  "roles.admin": "Әкімші",
+
+  "login.title": "Жүйеге кіру",
+  "login.submit": "Кіру",
+  "login.noAccount": "Аккаунтыңыз жоқ па?",
+  "login.registerLink": "Тіркелу",
+
+  "register.title": "Тіркелу",
+  "register.submit": "Тіркелу",
+  "register.haveAccount": "Аккаунтыңыз бар ма?",
+  "register.loginLink": "Кіру",
+
+  "profile.title": "Менің профилім",
+  "profile.name": "Аты-жөні",
+
+  "common.loading": "Жүктелуде...",
+
+  "errors.required": "Барлық міндетті өрістерді толтырыңыз.",
+  "errors.invalidCredentials": "Пайдаланушы аты немесе құпиясөз қате.",
+  "errors.emailInvalid": "Дұрыс email енгізіңіз.",
+  "errors.passwordShort": "Құпиясөз кемінде 8 таңбадан тұруы керек.",
+  "errors.passwordMismatch": "Құпиясөздер сәйкес келмейді.",
+  "errors.network": "Сервер қолжетімсіз. Бэкенд іске қосылған ба?",
+  "errors.unknown": "Қате орын алды. Қайталап көріңіз."
+}
