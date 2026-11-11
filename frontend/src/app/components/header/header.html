@@ -1,21 +1,5 @@
 <header class="header">
-  <a class="brand" routerLink="/">Mini LMS</a>
-
-  <nav class="nav">
-  @if (auth.isLoggedIn()) {
-    <a routerLink="/courses" routerLinkActive="active">{{ 'nav.courses' | t }}</a>
-    <a routerLink="/my-courses" routerLinkActive="active">{{ 'nav.my_courses' | t }}</a>
-        @if (auth.user()?.role === 'teacher') {
-      <a routerLink="/teacher" routerLinkActive="active">{{ 'nav.cabinet' | t }}</a>
-    }
-    <a routerLink="/profile" routerLinkActive="active">{{ 'nav.profile' | t }}</a>
-    <button type="button" class="link-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
-  } @else {
-    <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
-    <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>
-  }
-</nav>
-
+  <a class="brand" routerLink="/" (click)="closeMenu()">Mini LMS</a>
 
   <div class="langs" role="group" aria-label="Language">
     @for (lang of i18n.languages; track lang) {
@@ -29,4 +13,32 @@
       </button>
     }
   </div>
+
+  <!-- Кнопка-бургер: видна только на узких экранах (телефон) -->
+  <button
+    type="button"
+    class="burger"
+    aria-controls="main-nav"
+    [attr.aria-expanded]="menuOpen()"
+    [attr.aria-label]="'nav.menu' | t"
+    (click)="toggleMenu()"
+  >
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Клик по любой ссылке закрывает меню на телефоне -->
+  <nav id="main-nav" class="nav" [class.open]="menuOpen()" (click)="closeMenu()">
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/courses" routerLinkActive="active">{{ 'nav.courses' | t }}</a>
+      <a routerLink="/my-courses" routerLinkActive="active">{{ 'nav.my_courses' | t }}</a>
+      @if (auth.user()?.role === 'teacher') {
+        <a routerLink="/teacher" routerLinkActive="active">{{ 'nav.cabinet' | t }}</a>
+      }
+      <a routerLink="/profile" routerLinkActive="active">{{ 'nav.profile' | t }}</a>
+      <button type="button" class="link-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
+      <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>
+    }
+  </nav>
 </header>
