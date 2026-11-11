@@ -55,7 +55,10 @@ export class Register {
       .register({ ...f, username: f.username.trim(), email: f.email.trim() })
       .subscribe({
         // бэкенд сразу возвращает токен, поэтому после регистрации пользователь уже вошёл
-        next: () => this.router.navigate(['/profile']),
+     next: (res) => {
+  this.auth['saveSession'](res); // или сохраните токен/пользователя явно
+  this.router.navigate([this.auth.homeRoute()]);
+},
         error: (err: HttpErrorResponse) => {
           this.loading.set(false);
           if (err.status === 400 && err.error && typeof err.error === 'object') {

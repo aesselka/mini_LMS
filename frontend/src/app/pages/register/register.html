@@ -35,11 +35,11 @@
 
     <label>
       {{ 'fields.role' | t }}
-      <select name="role" [(ngModel)]="form.role">
-        <option value="student">{{ 'roles.student' | t }}</option>
-        <option value="teacher">{{ 'roles.teacher' | t }}</option>
-      </select>
-    </label>
+       <select [(ngModel)]="form.role" name="role">
+  <option value="student">Student</option>
+  <option value="teacher">Teacher</option>
+  </select>
+   </label>
 
     @if (error()) {
       <p class="error" role="alert">{{ error() | t }}</p>

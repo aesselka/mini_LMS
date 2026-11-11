@@ -1,0 +1,53 @@
+<section class="page">
+  <h1>{{ 'teacher.title' | t }}</h1>
+
+  @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+
+  <div class="card">
+    <h2>{{ 'teacher.newCourse' | t }}</h2>
+    <div class="form">
+      <input [(ngModel)]="form.code" [placeholder]="'teacher.code' | t" />
+      <input [(ngModel)]="form.title" [placeholder]="'teacher.titleField' | t" />
+      <input [(ngModel)]="form.description" [placeholder]="'teacher.description' | t" />
+      <input type="number" min="1" [(ngModel)]="form.credits" [placeholder]="'teacher.credits' | t" />
+      <button type="button" class="primary" (click)="createCourse()">{{ 'teacher.create' | t }}</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>{{ 'teacher.myCourses' | t }}</h2>
+    @for (c of courses(); track c.id) {
+      <div class="row" [class.selected]="selected()?.id === c.id">
+        <div class="info">
+          <span class="code">{{ c.code }}</span>
+          <span class="title">{{ c.title }}</span>
+          <span class="meta">{{ c.students_count }} {{ 'teacher.studentsCount' | t }}</span>
+        </div>
+        <div class="actions">
+          <button type="button" class="plain" (click)="openCourse(c)">{{ 'teacher.students' | t }}</button>
+          <button type="button" class="danger" (click)="deleteCourse(c)">{{ 'teacher.delete' | t }}</button>
+        </div>
+      </div>
+    } @empty {
+      <p class="muted">{{ 'teacher.noCourses' | t }}</p>
+    }
+  </div>
+
+  @if (selected(); as c) {
+    <div class="card">
+      <h2>{{ 'teacher.studentsOf' | t }} {{ c.code }}</h2>
+      @for (s of students(); track s.id) {
+        <div class="row">
+          <span class="title">{{ s.student }}</span>
+          <div class="actions">
+            <input class="grade" [(ngModel)]="s.grade" maxlength="2" [placeholder]="'teacher.grade' | t" />
+            <button type="button" class="primary" (click)="saveGrade(s)">{{ 'teacher.save' | t }}</button>
+            @if (savedId() === s.id) { <span class="ok">✓ {{ 'teacher.saved' | t }}</span> }
+          </div>
+        </div>
+      } @empty {
+        <p class="muted">{{ 'teacher.nobody' | t }}</p>
+      }
+    </div>
+  }
+</section>
