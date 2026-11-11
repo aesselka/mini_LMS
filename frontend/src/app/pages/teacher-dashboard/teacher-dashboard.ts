@@ -2,11 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CourseStudent, TeacherCourse, TeacherService } from '../../services/teacher.service';
+import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
   selector: 'app-teacher-dashboard',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './teacher-dashboard.html',
+  styleUrl: './teacher-dashboard.css',
 })
 export class TeacherDashboard implements OnInit {
   private api = inject(TeacherService);
@@ -15,6 +17,7 @@ export class TeacherDashboard implements OnInit {
   selected = signal<TeacherCourse | null>(null);
   students = signal<CourseStudent[]>([]);
   error = signal('');
+  savedId = signal<number | null>(null);
   form = { code: '', title: '', description: '', credits: 3 };
 
   ngOnInit(): void {
@@ -52,6 +55,7 @@ export class TeacherDashboard implements OnInit {
 
   openCourse(c: TeacherCourse): void {
     this.selected.set(c);
+    this.savedId.set(null);
     this.api.students(c.id).subscribe({
       next: (s) => this.students.set(s),
       error: (e) => this.fail(e),
@@ -59,8 +63,10 @@ export class TeacherDashboard implements OnInit {
   }
 
   saveGrade(s: CourseStudent): void {
+    this.error.set('');
+    this.savedId.set(null);
     this.api.setGrade(s.id, s.grade ?? '').subscribe({
-      next: () => this.error.set(''),
+      next: () => this.savedId.set(s.id),
       error: (e) => this.fail(e),
     });
   }
