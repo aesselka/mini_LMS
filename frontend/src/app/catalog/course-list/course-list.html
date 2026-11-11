@@ -1,9 +1,9 @@
 <section class="page">
   <header class="head">
-    <h1>Course catalog</h1>
-    <p class="sub">Find a course by title, code or teacher.</p>
+    <h1>{{ 'catalog.title' | t }}</h1>
+    <p class="sub">{{ 'catalog.subtitle' | t }}</p>
     @if (session.isStudent()) {
-      <a class="mine" routerLink="/my-courses">My courses &rarr;</a>
+      <a class="mine" routerLink="/my-courses">{{ 'catalog.myCoursesLink' | t }} &rarr;</a>
     }
   </header>
 
@@ -11,19 +11,19 @@
     <input
       type="search"
       [formControl]="search"
-      placeholder="Search courses…"
-      aria-label="Search courses"
+      [placeholder]="'catalog.searchPlaceholder' | t"
+      [attr.aria-label]="'catalog.searchPlaceholder' | t"
       autocomplete="off"
     />
     @if (search.value) {
-      <button type="button" class="clear" (click)="clear()" aria-label="Clear search">&times;</button>
+      <button type="button" class="clear" (click)="clear()" [attr.aria-label]="'catalog.clearSearch' | t">&times;</button>
     }
   </div>
 
   @if (error()) {
-    <div class="state err" role="alert">{{ error() }}</div>
+    <div class="state err" role="alert">{{ error() | t }}</div>
   } @else if (loading()) {
-    <div class="grid" aria-busy="true" aria-label="Loading courses">
+    <div class="grid" aria-busy="true" [attr.aria-label]="'catalog.loading' | t">
       @for (i of [1, 2, 3, 4, 5, 6]; track i) {
         <div class="card skeleton"></div>
       }
@@ -31,13 +31,14 @@
   } @else if (courses().length === 0) {
     <div class="state">
       @if (search.value) {
-        No courses match “{{ search.value }}”. <button type="button" class="link" (click)="clear()">Show all courses</button>
+        {{ 'catalog.noMatch' | t: { q: search.value } }}
+        <button type="button" class="link" (click)="clear()">{{ 'catalog.showAll' | t }}</button>
       } @else {
-        No courses yet.
+        {{ 'catalog.empty' | t }}
       }
     </div>
   } @else {
-    <p class="count" aria-live="polite">{{ courses().length }} {{ courses().length === 1 ? 'course' : 'courses' }}</p>
+    <p class="count" aria-live="polite">{{ 'catalog.count' | t: { n: courses().length } }}</p>
     <div class="grid">
       @for (c of courses(); track c.id) {
         <article class="card">
@@ -45,7 +46,9 @@
             <span class="code">{{ c.code }}</span>
             <h2>{{ c.title }}</h2>
             <p class="meta">{{ teacherName(c.teacher) }}</p>
-            <p class="meta">{{ c.credits }} credits &middot; {{ c.students_count }} {{ c.students_count === 1 ? 'student' : 'students' }}</p>
+            <p class="meta">
+              {{ 'catalog.credits' | t: { n: c.credits } }} &middot; {{ 'catalog.students' | t: { n: c.students_count } }}
+            </p>
           </a>
           <app-enroll-button [courseId]="c.id" (enrolled)="onEnrolled(c.id)" />
         </article>

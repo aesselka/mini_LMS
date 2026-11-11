@@ -7,11 +7,12 @@ import { Course, errorText, teacherName } from '../course';
 import { CourseService } from '../course-service';
 import { EnrollButton } from '../enroll-button/enroll-button';
 import { Session } from '../../core/session';
+import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
   selector: 'app-course-list',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, EnrollButton],
+  imports: [ReactiveFormsModule, RouterLink, EnrollButton, TranslatePipe],
   templateUrl: './course-list.html',
   styleUrl: './course-list.css',
 })
@@ -38,7 +39,7 @@ export class CourseList {
         tap(() => { this.loading.set(true); this.error.set(''); }),
         switchMap(q =>
           this.api.getCourses(q).pipe(
-            catchError(err => { this.error.set(errorText(err, 'Could not load courses.')); return of([] as Course[]); }),
+            catchError(err => { this.error.set(errorText(err, 'catalog.loadError')); return of([] as Course[]); }),
           ),
         ),
         takeUntilDestroyed(this.destroyRef),
