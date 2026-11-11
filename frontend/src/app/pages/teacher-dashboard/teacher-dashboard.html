@@ -1,0 +1,29 @@
+<h2>Teacher cabinet</h2>
+@if (error()) { <p style="color:red">{{ error() }}</p> }
+
+<h3>New course</h3>
+<input [(ngModel)]="form.code" placeholder="Code (CS101)" />
+<input [(ngModel)]="form.title" placeholder="Title" />
+<input [(ngModel)]="form.description" placeholder="Description" />
+<input type="number" [(ngModel)]="form.credits" />
+<button (click)="createCourse()">Create</button>
+
+<h3>My courses</h3>
+@for (c of courses(); track c.id) {
+  <div>
+    <b>{{ c.code }}</b> — {{ c.title }} ({{ c.students_count }} students)
+    <button (click)="openCourse(c)">Students</button>
+    <button (click)="deleteCourse(c)">Delete</button>
+  </div>
+} @empty { <p>No courses yet.</p> }
+
+@if (selected(); as c) {
+  <h3>Students of {{ c.code }}</h3>
+  @for (s of students(); track s.id) {
+    <div>
+      {{ s.student }}
+      <input [(ngModel)]="s.grade" maxlength="2" size="3" />
+      <button (click)="saveGrade(s)">Save</button>
+    </div>
+  } @empty { <p>Nobody enrolled.</p> }
+}

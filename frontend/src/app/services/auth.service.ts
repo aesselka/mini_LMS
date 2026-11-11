@@ -68,7 +68,9 @@ export class AuthService {
     localStorage.removeItem(USER_KEY);
     this.currentUser.set(null);
   }
-
+    homeRoute(): string {
+    return this.currentUser()?.role === 'teacher' ? '/teacher' : '/profile';
+  }
   private saveSession(res: AuthResponse): void {
     localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USER_KEY, JSON.stringify(res.user));
