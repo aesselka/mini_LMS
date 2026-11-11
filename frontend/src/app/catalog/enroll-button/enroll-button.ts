@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { Session } from '../../core/session';
 import { CourseService } from '../course-service';
 import { errorText } from '../course';
+import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
   selector: 'app-enroll-button',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './enroll-button.html',
   styleUrl: './enroll-button.css',
 })
@@ -34,7 +35,7 @@ export class EnrollButton {
       next: () => { this.busy.set(false); this.enrolled.emit(); },
       error: err => {
         this.busy.set(false);
-        this.error.set(err.status === 401 ? 'Your session expired. Please log in again.' : errorText(err));
+        this.error.set(errorText(err));
       },
     });
   }

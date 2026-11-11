@@ -1,22 +1,22 @@
 <section class="page">
-  <a routerLink="/courses" class="back">&larr; All courses</a>
+  <a routerLink="/courses" class="back">&larr; {{ 'course.back' | t }}</a>
 
   @if (loading()) {
-    <div class="skeleton" aria-busy="true" aria-label="Loading course"></div>
+    <div class="skeleton" aria-busy="true" [attr.aria-label]="'course.loading' | t"></div>
   } @else if (error()) {
-    <div class="state" role="alert">{{ error() }}</div>
+    <div class="state" role="alert">{{ error() | t }}</div>
   } @else {
     @if (course(); as c) {
       <article class="box">
         <span class="code">{{ c.code }}</span>
         <h1>{{ c.title }}</h1>
         <dl class="facts">
-          <div><dt>Teacher</dt><dd>{{ teacherName(c.teacher) }}</dd></div>
-          <div><dt>Credits</dt><dd>{{ c.credits }}</dd></div>
-          <div><dt>Students</dt><dd>{{ c.students_count }}</dd></div>
+          <div><dt>{{ 'course.teacher' | t }}</dt><dd>{{ teacherName(c.teacher) }}</dd></div>
+          <div><dt>{{ 'course.credits' | t }}</dt><dd>{{ c.credits }}</dd></div>
+          <div><dt>{{ 'course.students' | t }}</dt><dd>{{ c.students_count }}</dd></div>
         </dl>
-        <h2>About this course</h2>
-        <p class="desc">{{ c.description || 'No description yet.' }}</p>
+        <h2>{{ 'course.about' | t }}</h2>
+        <p class="desc">{{ c.description || ('course.noDescription' | t) }}</p>
         <app-enroll-button [courseId]="c.id" (enrolled)="onEnrolled()" />
       </article>
     }

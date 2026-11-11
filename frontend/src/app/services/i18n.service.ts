@@ -26,9 +26,16 @@ export class I18nService {
     this.load(lang).subscribe();
   }
 
-  // Возвращает перевод по ключу; если перевода нет — сам ключ
-  t(key: string): string {
-    return this.dictionary()[key] ?? key;
+  // Возвращает перевод по ключу; если перевода нет — сам ключ.
+  // params подставляются вместо {name}: t('catalog.count', { n: 5 }) -> "Курсов: 5"
+  t(key: string, params?: Record<string, string | number>): string {
+    let text = this.dictionary()[key] ?? key;
+    if (params) {
+      for (const [name, value] of Object.entries(params)) {
+        text = text.split(`{${name}}`).join(String(value));
+      }
+    }
+    return text;
   }
 
   private load(lang: Lang): Observable<Record<string, string>> {

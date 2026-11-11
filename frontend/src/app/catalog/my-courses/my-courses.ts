@@ -4,13 +4,14 @@ import { forkJoin } from 'rxjs';
 import { Course, Enrollment, errorText, teacherName } from '../course';
 import { CourseService } from '../course-service';
 import { Session } from '../../core/session';
+import { TranslatePipe } from '../../services/translate.pipe';
 
 interface Row { enrollment: Enrollment; course: Course | undefined; }
 
 @Component({
   selector: 'app-my-courses',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './my-courses.html',
   styleUrl: './my-courses.css',
 })
@@ -36,7 +37,7 @@ export class MyCourses {
         this.loading.set(false);
       },
       error: err => {
-        this.error.set(err.status === 401 ? 'Your session expired. Please log in again.' : errorText(err, 'Could not load your courses.'));
+        this.error.set(errorText(err, 'myCourses.loadError'));
         this.loading.set(false);
       },
     });
