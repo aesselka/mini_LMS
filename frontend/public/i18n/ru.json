@@ -106,5 +106,9 @@
   "errors.passwordShort": "Пароль должен быть не короче 8 символов.",
   "errors.passwordMismatch": "Пароли не совпадают.",
   "errors.network": "Сервер недоступен. Запущен ли бэкенд?",
-  "errors.unknown": "Что-то пошло не так. Попробуйте ещё раз."
+  "errors.unknown": "Что-то пошло не так. Попробуйте ещё раз.",
+  "errors.passwordNumeric": "Пароль не может состоять только из цифр.",
+  "errors.usernameTaken": "Это имя пользователя уже занято.",
+  "errors.passwordWeak": "Пароль слишком простой."
+
 }

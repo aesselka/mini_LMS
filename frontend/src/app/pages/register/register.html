@@ -36,8 +36,8 @@
     <label>
       {{ 'fields.role' | t }}
        <select [(ngModel)]="form.role" name="role">
-  <option value="student">Student</option>
-  <option value="teacher">Teacher</option>
+  <option value="student">{{ 'roles.student' | t }}</option>
+  <option value="teacher">{{ 'roles.teacher' | t }}</option>
   </select>
    </label>
 
@@ -47,7 +47,7 @@
     @if (serverErrors().length) {
       <ul class="error" role="alert">
         @for (msg of serverErrors(); track msg) {
-          <li>{{ msg }}</li>
+            <li>{{ msg | t }}</li>
         }
       </ul>
     }
