@@ -106,5 +106,9 @@
   "errors.passwordShort": "Password must be at least 8 characters.",
   "errors.passwordMismatch": "Passwords do not match.",
   "errors.network": "Server is not available. Is the backend running?",
-  "errors.unknown": "Something went wrong. Please try again."
+  "errors.unknown": "Something went wrong. Please try again.",
+  "errors.passwordNumeric": "Password cannot consist of digits only.",
+  "errors.usernameTaken": "This username is already taken.",
+  "errors.passwordWeak": "Password is too weak."
 }
+

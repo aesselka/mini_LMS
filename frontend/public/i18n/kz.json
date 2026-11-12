@@ -106,5 +106,8 @@
   "errors.passwordShort": "Құпиясөз кемінде 8 таңбадан тұруы керек.",
   "errors.passwordMismatch": "Құпиясөздер сәйкес келмейді.",
   "errors.network": "Сервер қолжетімсіз. Бэкенд іске қосылған ба?",
-  "errors.unknown": "Қате орын алды. Қайталап көріңіз."
+  "errors.unknown": "Қате орын алды. Қайталап көріңіз.",
+  "errors.passwordNumeric": "Құпиясөз тек сандардан тұрмауы керек.",
+  "errors.usernameTaken": "Бұл пайдаланушы аты бос емес.",
+  "errors.passwordWeak": "Құпиясөз тым қарапайым."
 }
