@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from courses.models import Course, Enrollment
+from courses.models import Assignment, Course, Enrollment, Lesson
 
 User = get_user_model()
 PASSWORD = "password123"
@@ -33,6 +33,18 @@ ENROLLMENTS = [
     ("timur", "CS101", "C"),
     ("timur", "MATH101", None),
 ]
+LESSONS = [
+    ("CS101", 1, "Introduction to databases"),
+    ("CS101", 2, "SQL basics: SELECT, INSERT"),
+    ("CS101", 3, "Keys and relationships"),
+    ("CS102", 1, "HTML and CSS"),
+    ("MATH101", 1, "Sets and logic"),
+]
+ASSIGNMENTS = [
+    ("CS101", "Draw an ERD", "2026-12-01"),
+    ("CS101", "Write 5 SQL queries", "2026-12-10"),
+    ("MATH101", "Logic homework", "2026-12-05"),
+]
 
 
 class Command(BaseCommand):
@@ -57,5 +69,13 @@ class Command(BaseCommand):
                 course=Course.objects.get(code=code),
                 defaults={"grade": grade},
             )
+
+        for code, order, title in LESSONS:
+            Lesson.objects.get_or_create(course=Course.objects.get(code=code), order=order,
+                                         defaults={"title": title})
+
+        for code, title, due_date in ASSIGNMENTS:
+            Assignment.objects.get_or_create(course=Course.objects.get(code=code), title=title,
+                                             defaults={"due_date": due_date})
 
         self.stdout.write("done, password for all users: " + PASSWORD)

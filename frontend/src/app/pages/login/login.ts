@@ -31,7 +31,7 @@ export class Login {
 
     this.loading.set(true);
     this.auth.login(this.username.trim(), this.password).subscribe({
-      next: () => this.router.navigate(['/profile']),
+     next: () => this.router.navigate([this.auth.homeRoute()]),
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         if (err.status === 401 || err.status === 400) {

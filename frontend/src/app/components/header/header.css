@@ -14,11 +14,17 @@
   text-decoration: none;
 }
 
+/* На компьютере: ссылки в одну строку между логотипом и языками */
 .nav {
+  order: 1;
   display: flex;
   align-items: center;
   gap: 18px;
   flex: 1;
+}
+
+.langs {
+  order: 2;
 }
 
 .nav a,
@@ -63,4 +69,81 @@
 .langs button.active {
   background: var(--primary);
   color: #ffffff;
+}
+
+/* Бургер скрыт на компьютере */
+.burger {
+  display: none;
+}
+
+/* ---------- Телефон и узкий планшет ---------- */
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+
+  /* первая строка: логотип | языки | бургер */
+  .brand {
+    order: 0;
+    flex: 1;
+  }
+
+  .langs {
+    order: 1;
+  }
+
+  .langs button {
+    padding: 6px 9px;
+  }
+
+  .burger {
+    order: 2;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 40px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+  }
+
+  .burger span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text);
+  }
+
+  /* вторая строка: выпадающее меню, скрыто пока не нажат бургер */
+  .nav {
+    order: 3;
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav.open {
+    display: flex;
+  }
+
+  .nav a,
+  .link-btn {
+    padding: 12px 4px;
+    font-size: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav > :last-child {
+    border-bottom: none;
+  }
 }

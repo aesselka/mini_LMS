@@ -1,4 +1,3 @@
- HEAD
 body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; color: #111827; }
 
 
@@ -146,18 +145,18 @@ a {
   font-weight: 700;
 }
 
-.info {
+dl.info {
   display: grid;
   grid-template-columns: max-content 1fr;
   gap: 12px 20px;
   margin: 0;
 }
 
-.info dt {
+dl.info dt {
   color: var(--text-muted);
 }
 
-.info dd {
+dl.info dd {
   margin: 0;
   font-weight: 500;
 }
@@ -172,3 +171,43 @@ a {
   font-weight: 600;
 }
 
+/* ---------- Телефон ---------- */
+@media (max-width: 600px) {
+  .page {
+    padding: 24px 12px;
+  }
+
+  /* формы входа/регистрации и профиль: меньше отступы */
+  .card {
+    padding: 20px;
+  }
+
+  /* Имя и Фамилия в регистрации — друг под другом */
+  .row {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* профиль: подпись над значением */
+  dl.info {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  dl.info dd {
+    margin-bottom: 10px;
+  }
+
+  /* чтобы iPhone не увеличивал страницу при вводе */
+  input,
+  select {
+    font-size: 16px;
+  }
+  
+}
+/* Карточки курсов в каталоге: на всю ширину ячейки сетки
+   (общий стиль .card выше — для форм входа/регистрации) */
+.grid > .card {
+  max-width: none;
+  margin: 0;
+}

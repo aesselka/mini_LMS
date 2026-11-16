@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { TeacherDashboard } from './pages/teacher-dashboard/teacher-dashboard';
+import { teacherGuard } from './services/role.guard';
+
 import { CourseList } from './catalog/course-list/course-list';
 import { CourseDetail } from './catalog/course-detail/course-detail';
 import { MyCourses } from './catalog/my-courses/my-courses';
@@ -19,6 +22,8 @@ export const routes: Routes = [
   { path: 'courses', component: CourseList, canActivate: [authGuard] },
   { path: 'courses/:id', component: CourseDetail, canActivate: [authGuard] },
   { path: 'my-courses', component: MyCourses, canActivate: [authGuard] },
+
+  { path: 'teacher', component: TeacherDashboard, canActivate: [authGuard, teacherGuard] },
 
   { path: '**', redirectTo: '' },
 ];

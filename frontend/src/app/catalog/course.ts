@@ -31,9 +31,12 @@ export function teacherName(t: Teacher): string {
 }
 
 // DRF sends errors as {"non_field_errors": [...]}, ["..."], {"detail": "..."} or {"field": [...]}
-export function errorText(err: any, fallback = 'Something went wrong. Please try again.'): string {
+// Returns either a translation key (errors.network, fallback) or the server's own message.
+// In templates show it through the pipe: {{ error() | t }} — keys are translated, server text stays as is.
+export function errorText(err: any, fallback = 'errors.unknown'): string {
   const body = err?.error;
-  if (err?.status === 0) return 'Cannot reach the server. Is the backend running?';
+  if (err?.status === 0) return 'errors.network';
+  if (err?.status === 401) return 'errors.sessionExpired';
   if (typeof body === 'string' && body.length < 200) return body;
   if (Array.isArray(body) && body.length) return String(body[0]);
   if (body && typeof body === 'object') {

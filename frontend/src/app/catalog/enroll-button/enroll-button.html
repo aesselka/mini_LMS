@@ -1,14 +1,14 @@
 @if (!session.token()) {
-  <a class="btn btn-ghost" routerLink="/login">Log in to enroll</a>
+  <a class="btn btn-ghost" routerLink="/login">{{ 'enroll.login' | t }}</a>
 } @else if (session.isStudent()) {
   @if (isEnrolled()) {
-    <span class="done" role="status">&#10003; Enrolled</span>
+    <span class="done" role="status">&#10003; {{ 'enroll.enrolled' | t }}</span>
   } @else {
     <button class="btn" type="button" [disabled]="busy()" (click)="enroll($event)">
-      {{ busy() ? 'Enrolling…' : 'Enroll' }}
+      {{ (busy() ? 'enroll.enrolling' : 'enroll.enroll') | t }}
     </button>
   }
   @if (error()) {
-    <p class="err" role="alert">{{ error() }}</p>
+    <p class="err" role="alert">{{ error() | t }}</p>
   }
 }
