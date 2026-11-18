@@ -85,6 +85,42 @@
 
   "errors.sessionExpired": "Your session has expired. Please log in again.",
 
+  "theme.toDark": "Dark theme",
+  "theme.toLight": "Light theme",
+
+  "password.show": "Show",
+  "password.hide": "Hide",
+
+  "strength.title": "Password strength",
+  "strength.weak": "weak",
+  "strength.medium": "medium",
+  "strength.strong": "strong",
+  "strength.hintLength": "At least 12 characters",
+  "strength.hintCase": "Upper- and lowercase letters",
+  "strength.hintDigit": "At least one digit",
+  "strength.hintSymbol": "A symbol, e.g. ! @ # $",
+
+  "login.forgot": "Forgot password?",
+
+  "forgot.title": "Reset password",
+  "forgot.text": "Enter the email you used to register. We will send you a link to set a new password.",
+  "forgot.submit": "Send link",
+  "forgot.sent": "If an account with this email exists, we have sent it a link to reset the password. Check your inbox.",
+  "forgot.backToLogin": "Back to login",
+
+  "reset.title": "New password",
+  "reset.newPassword": "New password",
+  "reset.submit": "Save password",
+  "reset.done": "Password changed. You can now log in with the new password.",
+  "reset.goToLogin": "Log in",
+  "reset.invalidLink": "This link is invalid or has expired.",
+  "reset.requestNew": "Request a new link",
+
+  "pet.label": "Capybara — click to pet",
+  "pet.msg1": "Hi! Study well!",
+  "pet.msg2": "Don't forget your homework",
+  "pet.msg3": "You can do it!",
+
   "login.title": "Log in",
   "login.submit": "Log in",
   "login.noAccount": "Don't have an account?",

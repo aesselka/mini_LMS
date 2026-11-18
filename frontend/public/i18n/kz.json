@@ -85,6 +85,42 @@
 
   "errors.sessionExpired": "Сессия аяқталды. Қайта кіріңіз.",
 
+  "theme.toDark": "Қараңғы тақырып",
+  "theme.toLight": "Ашық тақырып",
+
+  "password.show": "Көрсету",
+  "password.hide": "Жасыру",
+
+  "strength.title": "Құпиясөз беріктігі",
+  "strength.weak": "әлсіз",
+  "strength.medium": "орташа",
+  "strength.strong": "мықты",
+  "strength.hintLength": "Кемінде 12 таңба",
+  "strength.hintCase": "Бас және кіші әріптер",
+  "strength.hintDigit": "Кемінде бір сан",
+  "strength.hintSymbol": "Таңба, мысалы ! @ # $",
+
+  "login.forgot": "Құпиясөзді ұмыттыңыз ба?",
+
+  "forgot.title": "Құпиясөзді қалпына келтіру",
+  "forgot.text": "Тіркелу кезінде көрсеткен email-ді енгізіңіз. Жаңа құпиясөз орнату үшін сілтеме жібереміз.",
+  "forgot.submit": "Сілтеме жіберу",
+  "forgot.sent": "Егер мұндай email-мен аккаунт бар болса, оған құпиясөзді қалпына келтіру сілтемесін жібердік. Поштаңызды тексеріңіз.",
+  "forgot.backToLogin": "Кіру бетіне оралу",
+
+  "reset.title": "Жаңа құпиясөз",
+  "reset.newPassword": "Жаңа құпиясөз",
+  "reset.submit": "Құпиясөзді сақтау",
+  "reset.done": "Құпиясөз өзгертілді. Енді жаңа құпиясөзбен кіріңіз.",
+  "reset.goToLogin": "Кіру",
+  "reset.invalidLink": "Сілтеме жарамсыз немесе мерзімі өткен.",
+  "reset.requestNew": "Жаңа сілтеме сұрау",
+
+  "pet.label": "Капибара — сипау үшін бас",
+  "pet.msg1": "Сәлем! Жақсы оқы!",
+  "pet.msg2": "Үй тапсырмасын ұмытпа",
+  "pet.msg3": "Сенің қолыңнан келеді!",
+
   "login.title": "Жүйеге кіру",
   "login.submit": "Кіру",
   "login.noAccount": "Аккаунтыңыз жоқ па?",
