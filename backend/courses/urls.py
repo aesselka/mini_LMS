@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (AssignmentViewSet, CourseViewSet, EnrollmentViewSet, LessonViewSet,
-                    SubmissionViewSet, my_courses, stats)
+                    SubmissionViewSet, my_courses, stats, transcript)
 
 router = DefaultRouter()
 router.register("courses", CourseViewSet, basename="course")
@@ -14,4 +14,5 @@ router.register("submissions", SubmissionViewSet, basename="submission")
 urlpatterns = [
     path("my-courses/", my_courses, name="my-courses"),
     path("stats/", stats, name="stats"),
+    path("transcript/", transcript, name="transcript"),
 ] + router.urls

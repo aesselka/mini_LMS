@@ -23,11 +23,24 @@ class CourseSerializer(serializers.ModelSerializer):
         required=False,
     )
     students_count = serializers.IntegerField(read_only=True)
+    seats_left = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = ["id", "code", "title", "description", "credits",
-                  "teacher", "teacher_id", "students_count", "created_at"]
+        fields = ["id", "code", "title", "description", "credits", "max_students",
+                  "seats_left", "teacher", "teacher_id", "students_count", "created_at"]
+
+    def get_seats_left(self, course):
+        count = getattr(course, "students_count", None)
+        if count is None:
+            count = course.enrollments.count()
+        return max(course.max_students - count, 0)
+
+    def validate_max_students(self, value):
+        # can't make limit smaller than students already enrolled
+        if self.instance and value < self.instance.enrollments.count():
+            raise serializers.ValidationError("limit is less than enrolled students")
+        return value
 
     def validate(self, attrs):
         user = self.context["request"].user
@@ -70,6 +83,11 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         # check duplicate enrollment
         if Enrollment.objects.filter(student=attrs["student"], course=attrs["course"]).exists():
             raise serializers.ValidationError("student is already enrolled in this course")
+
+        # check free seats
+        course = attrs["course"]
+        if course.enrollments.count() >= course.max_students:
+            raise serializers.ValidationError("course is full")
         return attrs
 
 

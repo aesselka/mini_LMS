@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .serializers import RegisterSerializer, UserSerializer
+from .permissions import IsAdminRole
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # ИСПОЛЬЗУЕМ RegisterSerializer (в котором прописаны validate_email и validate_password)
+        # use RegisterSerializer
         serializer = RegisterSerializer(data=request.data)
         
         if not serializer.is_valid():
@@ -48,7 +49,7 @@ class LoginView(APIView):
                 "token": token.key,
                 "user": UserSerializer(user).data
             }, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -124,3 +125,23 @@ class PasswordResetConfirmView(APIView):
         Token.objects.filter(user=user).delete()  # выйти со всех устройств со старым паролем
         return Response({"detail": "Password has been reset."})
 
+    
+    
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if hasattr(request.user, 'auth_token'):
+            request.user.auth_token.delete()
+        return Response(
+            {"message": "Successfully logged out. Token deleted."},
+            status=status.HTTP_200_OK
+        )
+        
+    
+class UserListView(APIView):
+    permission_classes = [IsAdminRole]
+
+    def get(self, request):
+        users = User.objects.all()
+        return Response(UserSerializer(users, many=True).data, status=status.HTTP_200_OK)

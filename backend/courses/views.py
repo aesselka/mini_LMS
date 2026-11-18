@@ -90,6 +90,42 @@ def my_courses(request):
     return Response(MyCourseSerializer(enrollments, many=True).data)
 
 
+# GET /api/transcript/
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def transcript(request):
+    enrollments = Enrollment.objects.filter(student=request.user).select_related("course")
+
+    courses = []
+    total_points = 0
+    graded_credits = 0
+    for e in enrollments:
+        credits = e.course.credits
+        points = GRADE_POINTS.get(e.grade)  # None if no grade yet
+        courses.append({
+            "code": e.course.code,
+            "title": e.course.title,
+            "credits": credits,
+            "grade": e.grade,
+            "points": points,
+        })
+        # only graded courses count in gpa
+        if points is not None:
+            total_points += points * credits
+            graded_credits += credits
+
+    # gpa = sum(points * credits) / sum(credits)
+    gpa = round(total_points / graded_credits, 2) if graded_credits else None
+
+    return Response({
+        "student": request.user.get_full_name() or request.user.username,
+        "courses": courses,
+        "total_credits": sum(c["credits"] for c in courses),
+        "graded_credits": graded_credits,
+        "gpa": gpa,
+    })
+
+
 # base for lessons and assignments: same access rules
 class CourseContentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
