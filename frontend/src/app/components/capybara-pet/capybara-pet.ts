@@ -25,33 +25,34 @@ const BODY = [
 const LEGS_A = ['..ODO.ODO....ODO.ODO....', '..OOO.OOO....OOO.OOO....'];
 const LEGS_B = ['...ODO.ODO..ODO.ODO.....', '...OOO.OOO..OOO.OOO.....'];
 
-// картинка «в руках» (стиль каваи): большая голова, блестящие глаза, лапки у щёчек, ротик «о» от удивления
+// картинка «в руках»: смотрит на нас и удивляется — носик, глазки с бликом, румянец, лапки у груди
 const HELD = [
-  '........................',
-  '......OO........OO....Y.',
-  '.....ODDOOOOOOOODDO..Y..',
-  '.....ODDOBBBBBBODDO.....',
-  '......OBBBBBBBBBBO....YY',
-  '.....OBBBBBBBBBBBBO.....',
-  '....OBBBBBBBBBBBBBBO.Y..',
-  '...OBBBBBBBBBBBBBBBBO.Y.',
+  '.....OOO........OOO...Y.',
+  '....OBBBO......OBBBO.Y..',
+  '....OBDBOOOOOOOOBDBO....',
+  '....OBBBBBBBBBBBBBBO....',
+  '....OBBBBBBBBBBBBBBO.YYY',
+  '...OBBBBBBBBBBBBBBBBO...',
+  '...OBBBBBBBBBBBBBBBBOYY.',
   '...OBBBWEBBBBBBWEBBBO...',
-  '...OBBBEEBBBBBBEEBBBO...',
-  '...OBBBESBBBBBBESBBBO...',
-  '...OBPPBBLLNNLLBBPPBO...',
-  '..ODDBBBBLLLLLLBBBBDDO..',
-  '..OBBOBBBLNMMNLBBBOBBO..',
-  '..OBBOOBBBBNNBBBBOOBBO..',
-  '...OO..OOBBBBBBOO..OO...',
-  '........OBBBBBBO........',
-  '.......OBBLLLLBBO.......',
-  '.......OBBLLLLBBO.......',
-  '.......OBLLLLLLBO.......',
-  '.......OBBLLLLBBO.......',
-  '......G.OBLLLLBO.G......',
-  '......G.ODDBBDDO.G......',
-  '.......GODDOODDOG.......',
-  '.........OO..OO.........',
+  '...OBBBEEDDDDDDEEBBBO...',
+  '...OBBBBBDNDDNDBBBBBO...',
+  '...OBPPBBDDDDDDBBPPBO...',
+  '...OBBBBBBNMMNBBBBBBO...',
+  '...OBBBBBBNMMNBBBBBBO...',
+  '....OBBBBBBNNBBBBBBO....',
+  '....OBBBOOBBBBBOOBBO....',
+  '....OBBODDOBBBODDOBO....',
+  '....OBBODDOLLLODDOBO....',
+  '....OBBBOOLLLLLOOBBO....',
+  '...OBBBLLLLLLLLLLBBBO...',
+  '....OBBLLLLLLLLLLBBO....',
+  '...GOBBLLLLLLLLLLBBOG...',
+  '...GOBBBLLLLLLLLBBBOG...',
+  '....GOBBBLLLLLLBBBOG....',
+  '......ODDDBBBBDDDO......',
+  '......ODDDOOOODDDO......',
+  '.......OOO....OOO.......',
 ];
 
 const COLORS: Record<string, string> = {
@@ -62,22 +63,13 @@ const COLORS: Record<string, string> = {
   N: '#4a2c1a', // нос
   E: '#1a1008', // глаз
   P: '#e88a8a', // румянец
-};
-
-const HELD_COLORS: Record<string, string> = {
-  O: '#4a2c1a', // контур
-  B: '#b07445', // шерсть
-  D: '#8f5a35', // ушки, подушечки лап
-  L: '#ddb07f', // мордочка и брюшко
-  N: '#3a2214', // носик, ротик
-  E: '#1f130b', // глаза
-  S: '#5a3a24', // нижний край глаза
   W: '#ffffff', // блик в глазу
-  P: '#ff9eaa', // румянец
+  S: '#3b2416', // нижний край глаза
   M: '#f2738c', // открытый ротик
   Y: '#f59e0b', // чёрточки удивления
-  G: '#9ca3af', // линии движения
+  G: '#7c6f66', // линии движения
 };
+
 
 interface Pixel {
   x: number;
@@ -85,11 +77,11 @@ interface Pixel {
   color: string;
 }
 
-function toPixels(rows: string[], palette: Record<string, string> = COLORS): Pixel[] {
+function toPixels(rows: string[]): Pixel[] {
   const pixels: Pixel[] = [];
   rows.forEach((row, y) =>
     [...row].forEach((ch, x) => {
-      const color = palette[ch];
+      const color = COLORS[ch];
       if (color) pixels.push({ x, y, color });
     }),
   );
@@ -97,6 +89,7 @@ function toPixels(rows: string[], palette: Record<string, string> = COLORS): Pix
 }
 
 const SCALE = 3; // размер одного «пикселя» на экране
+const HELD_SCALE = 2.5; // «в руках» капибара чуть меньше
 const GRID_W = 24;
 const GRID_H = BODY.length + LEGS_A.length;
 const PET_W = GRID_W * SCALE; // 72px — длина капибары
@@ -122,9 +115,9 @@ export class CapybaraPet implements OnInit, OnDestroy {
   protected readonly width = PET_W;
   protected readonly height = PET_H;
   protected readonly viewBox = `0 0 ${GRID_W} ${GRID_H}`;
-  protected readonly heldPixels = toPixels(HELD, HELD_COLORS);
-  protected readonly heldWidth = HELD[0].length * SCALE; // 72px
-  protected readonly heldHeight = HELD.length * SCALE; // 75px
+  protected readonly heldPixels = toPixels(HELD);
+  protected readonly heldWidth = HELD[0].length * HELD_SCALE; // 60px
+  protected readonly heldHeight = HELD.length * HELD_SCALE; // 65px
   protected readonly heldViewBox = `0 0 ${HELD[0].length} ${HELD.length}`;
 
   // центр капибары на экране и её поворот

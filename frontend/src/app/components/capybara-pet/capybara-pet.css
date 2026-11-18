@@ -43,8 +43,14 @@
 .held .capy {
   cursor: grabbing;
   transition: none;
+  outline: none; /* в руках — без рамки */
 }
 
+.capy:focus {
+  outline: none;
+}
+
+/* рамка только при управлении с клавиатуры */
 .capy:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
