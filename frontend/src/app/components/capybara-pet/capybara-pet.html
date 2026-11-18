@@ -24,13 +24,29 @@
     (pointerup)="onPointerUp($event)"
     (pointercancel)="onPointerUp($event)"
   >
-    <svg [attr.viewBox]="viewBox" [attr.width]="width" [attr.height]="height" shape-rendering="crispEdges" aria-hidden="true">
-      <!-- идёт «назад» — отражаем рисунок по горизонтали -->
-      <svg:g [attr.transform]="flip() ? 'translate(24 0) scale(-1 1)' : null">
-        @for (p of frames[frame()]; track $index) {
+    @if (dragging()) {
+      <!-- в руках: висит лицом к нам -->
+      <svg
+        class="held-svg"
+        [attr.viewBox]="heldViewBox"
+        [attr.width]="heldWidth"
+        [attr.height]="heldHeight"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+      >
+        @for (p of heldPixels; track $index) {
           <svg:rect [attr.x]="p.x" [attr.y]="p.y" width="1" height="1" [attr.fill]="p.color" />
         }
-      </svg:g>
-    </svg>
+      </svg>
+    } @else {
+      <svg [attr.viewBox]="viewBox" [attr.width]="width" [attr.height]="height" shape-rendering="crispEdges" aria-hidden="true">
+        <!-- идёт «назад» — отражаем рисунок по горизонтали -->
+        <svg:g [attr.transform]="flip() ? 'translate(24 0) scale(-1 1)' : null">
+          @for (p of frames[frame()]; track $index) {
+            <svg:rect [attr.x]="p.x" [attr.y]="p.y" width="1" height="1" [attr.fill]="p.color" />
+          }
+        </svg:g>
+      </svg>
+    }
   </button>
 </div>

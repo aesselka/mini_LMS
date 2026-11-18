@@ -25,6 +25,35 @@ const BODY = [
 const LEGS_A = ['..ODO.ODO....ODO.ODO....', '..OOO.OOO....OOO.OOO....'];
 const LEGS_B = ['...ODO.ODO..ODO.ODO.....', '...OOO.OOO..OOO.OOO.....'];
 
+// картинка «в руках» (стиль каваи): большая голова, блестящие глаза, лапки у щёчек, ротик «о» от удивления
+const HELD = [
+  '........................',
+  '......OO........OO....Y.',
+  '.....ODDOOOOOOOODDO..Y..',
+  '.....ODDOBBBBBBODDO.....',
+  '......OBBBBBBBBBBO....YY',
+  '.....OBBBBBBBBBBBBO.....',
+  '....OBBBBBBBBBBBBBBO.Y..',
+  '...OBBBBBBBBBBBBBBBBO.Y.',
+  '...OBBBWEBBBBBBWEBBBO...',
+  '...OBBBEEBBBBBBEEBBBO...',
+  '...OBBBESBBBBBBESBBBO...',
+  '...OBPPBBLLNNLLBBPPBO...',
+  '..ODDBBBBLLLLLLBBBBDDO..',
+  '..OBBOBBBLNMMNLBBBOBBO..',
+  '..OBBOOBBBBNNBBBBOOBBO..',
+  '...OO..OOBBBBBBOO..OO...',
+  '........OBBBBBBO........',
+  '.......OBBLLLLBBO.......',
+  '.......OBBLLLLBBO.......',
+  '.......OBLLLLLLBO.......',
+  '.......OBBLLLLBBO.......',
+  '......G.OBLLLLBO.G......',
+  '......G.ODDBBDDO.G......',
+  '.......GODDOODDOG.......',
+  '.........OO..OO.........',
+];
+
 const COLORS: Record<string, string> = {
   O: '#3b2416', // контур
   B: '#a0673a', // шерсть
@@ -35,17 +64,32 @@ const COLORS: Record<string, string> = {
   P: '#e88a8a', // румянец
 };
 
+const HELD_COLORS: Record<string, string> = {
+  O: '#4a2c1a', // контур
+  B: '#b07445', // шерсть
+  D: '#8f5a35', // ушки, подушечки лап
+  L: '#ddb07f', // мордочка и брюшко
+  N: '#3a2214', // носик, ротик
+  E: '#1f130b', // глаза
+  S: '#5a3a24', // нижний край глаза
+  W: '#ffffff', // блик в глазу
+  P: '#ff9eaa', // румянец
+  M: '#f2738c', // открытый ротик
+  Y: '#f59e0b', // чёрточки удивления
+  G: '#9ca3af', // линии движения
+};
+
 interface Pixel {
   x: number;
   y: number;
   color: string;
 }
 
-function toPixels(rows: string[]): Pixel[] {
+function toPixels(rows: string[], palette: Record<string, string> = COLORS): Pixel[] {
   const pixels: Pixel[] = [];
   rows.forEach((row, y) =>
     [...row].forEach((ch, x) => {
-      const color = COLORS[ch];
+      const color = palette[ch];
       if (color) pixels.push({ x, y, color });
     }),
   );
@@ -78,6 +122,10 @@ export class CapybaraPet implements OnInit, OnDestroy {
   protected readonly width = PET_W;
   protected readonly height = PET_H;
   protected readonly viewBox = `0 0 ${GRID_W} ${GRID_H}`;
+  protected readonly heldPixels = toPixels(HELD, HELD_COLORS);
+  protected readonly heldWidth = HELD[0].length * SCALE; // 72px
+  protected readonly heldHeight = HELD.length * SCALE; // 75px
+  protected readonly heldViewBox = `0 0 ${HELD[0].length} ${HELD.length}`;
 
   // центр капибары на экране и её поворот
   protected cx = signal(PET_W / 2);
@@ -154,7 +202,7 @@ export class CapybaraPet implements OnInit, OnDestroy {
     if (!this.dragging()) {
       const moved = Math.hypot(event.clientX - this.startX, event.clientY - this.startY);
       if (moved < DRAG_THRESHOLD) return;
-      // начали тащить: капибара поворачивается лапами вниз и пищит
+      // начали тащить: капибара повисает лицом к нам и пищит
       this.dragging.set(true);
       this.snapping.set(false);
       this.setAngle(0);
@@ -165,8 +213,6 @@ export class CapybaraPet implements OnInit, OnDestroy {
     this.cx.set(Math.min(W, Math.max(0, event.clientX - this.offsetX)));
     this.cy.set(Math.min(H, Math.max(0, event.clientY - this.offsetY)));
     this.updateBubbleAlign();
-    this.ticks++;
-    if (this.ticks % 4 === 0) this.frame.update((f) => (f === 0 ? 1 : 0)); // болтает лапами
   }
 
   onPointerUp(event: PointerEvent): void {
