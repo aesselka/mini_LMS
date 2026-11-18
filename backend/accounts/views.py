@@ -4,14 +4,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer, UserSerializer
+from django.contrib.auth import authenticate, get_user_model
+from .permissions import IsAdminRole
+
+User = get_user_model()
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # ИСПОЛЬЗУЕМ RegisterSerializer (в котором прописаны validate_email и validate_password)
+        # use RegisterSerializer
         serializer = RegisterSerializer(data=request.data)
         
         if not serializer.is_valid():
@@ -39,7 +42,7 @@ class LoginView(APIView):
                 "token": token.key,
                 "user": UserSerializer(user).data
             }, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -47,3 +50,23 @@ class UserProfileView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if hasattr(request.user, 'auth_token'):
+            request.user.auth_token.delete()
+        return Response(
+            {"message": "Successfully logged out. Token deleted."},
+            status=status.HTTP_200_OK
+        )
+        
+    
+class UserListView(APIView):
+    permission_classes = [IsAdminRole]
+
+    def get(self, request):
+        users = User.objects.all()
+        return Response(UserSerializer(users, many=True).data, status=status.HTTP_200_OK)
