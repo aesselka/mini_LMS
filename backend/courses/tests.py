@@ -282,3 +282,49 @@ class CapacityTranscriptTest(TestCase):
 
     def test_transcript_needs_login(self):
         self.assertIn(self.client.get("/api/transcript/").status_code, (401, 403))
+
+
+class MyStandingTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.marat = User.objects.create_user("marat", password="x", role="teacher")
+        self.student = User.objects.create_user("aruzhan", password="x", role="student")
+        self.db = Course.objects.create(code="CS101", title="Databases", teacher=self.marat)
+        Enrollment.objects.create(student=self.student, course=self.db)
+        self.a1 = Assignment.objects.create(course=self.db, title="ERD", max_score=100)
+        self.a2 = Assignment.objects.create(course=self.db, title="SQL", max_score=50)
+
+    def standing(self):
+        self.client.force_authenticate(self.student)
+        return self.client.get("/api/courses/my-standing/").json()["courses"][0]
+
+    def test_average_in_percent(self):
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x", score=85)
+        Submission.objects.create(assignment=self.a2, student=self.student, answer="x", score=40)  # 80%
+        data = self.standing()
+        self.assertEqual(data["current_midterm_avg"], 82.5)  # (85 + 80) / 2
+        self.assertEqual(data["midterm_points"], 49.5)       # 82.5 * 0.6
+        self.assertEqual(data["graded"], 2)
+
+    def test_final_needed(self):
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x", score=80)
+        data = self.standing()
+        self.assertEqual(data["final_needed_for_70"], 55.0)  # (70 - 48) / 0.4
+        self.assertIsNone(data["final_needed_for_90"])  # needs 105, not possible
+
+    def test_not_graded_yet(self):
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x")
+        data = self.standing()
+        self.assertIsNone(data["current_midterm_avg"])
+        self.assertEqual(data["submitted"], 1)
+        self.assertEqual(data["assignments_total"], 2)
+
+    def test_other_student_scores_not_counted(self):
+        other = User.objects.create_user("timur", password="x", role="student")
+        Submission.objects.create(assignment=self.a1, student=other, answer="x", score=10)
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x", score=90)
+        self.assertEqual(self.standing()["current_midterm_avg"], 90.0)
+
+    def test_needs_login(self):
+        r = self.client.get("/api/courses/my-standing/")
+        self.assertIn(r.status_code, (401, 403))

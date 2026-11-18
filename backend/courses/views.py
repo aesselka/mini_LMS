@@ -15,6 +15,10 @@ from .serializers import (AssignmentSerializer, CourseSerializer, EnrollmentSeri
 
 User = get_user_model()
 
+# total = 0.6 * midterm + 0.4 * final
+MIDTERM_WEIGHT = 0.6
+FINAL_WEIGHT = 0.4
+
 
 # /api/courses/
 class CourseViewSet(viewsets.ModelViewSet):
@@ -36,6 +40,56 @@ class CourseViewSet(viewsets.ModelViewSet):
                 | Q(teacher__last_name__icontains=search)
             )
         return courses
+
+    # GET /api/courses/my-standing/
+    @action(detail=False, methods=["get"], url_path="my-standing",
+            permission_classes=[permissions.IsAuthenticated])
+    def my_standing(self, request):
+        enrollments = (Enrollment.objects.filter(student=request.user)
+                       .select_related("course", "course__teacher"))
+        courses = [course_standing(e.course, request.user) for e in enrollments]
+        return Response({
+            "student": request.user.get_full_name() or request.user.username,
+            "midterm_weight": MIDTERM_WEIGHT,
+            "final_weight": FINAL_WEIGHT,
+            "courses": courses,
+        })
+
+
+def final_needed(midterm_avg, target):
+    # what final score gives this total
+    needed = (target - MIDTERM_WEIGHT * midterm_avg) / FINAL_WEIGHT
+    if needed > 100:
+        return None  # not possible
+    return max(round(needed, 1), 0)
+
+
+def course_standing(course, student):
+    assignments_total = course.assignments.count()
+    submissions = Submission.objects.filter(assignment__course=course, student=student)
+    graded = submissions.filter(score__isnull=False).select_related("assignment")
+
+    # each work in percent: score / max_score * 100
+    percents = [s.score / s.assignment.max_score * 100 for s in graded if s.assignment.max_score]
+    avg = round(sum(percents) / len(percents), 1) if percents else None
+
+    teacher = course.teacher
+    return {
+        "course_id": course.id,
+        "code": course.code,
+        "title": course.title,
+        "credits": course.credits,
+        "teacher": f"{teacher.first_name} {teacher.last_name}".strip() or teacher.username,
+        "assignments_total": assignments_total,
+        "submitted": submissions.count(),
+        "graded": len(percents),
+        "current_midterm_avg": avg,
+        # how much midterm already gives to the total (max 60)
+        "midterm_points": round(avg * MIDTERM_WEIGHT, 1) if avg is not None else None,
+        # final score needed for scholarship (70) and high scholarship (90)
+        "final_needed_for_70": final_needed(avg, 70) if avg is not None else None,
+        "final_needed_for_90": final_needed(avg, 90) if avg is not None else None,
+    }
 
 
 # /api/enrollments/

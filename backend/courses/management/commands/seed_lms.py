@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from courses.models import Assignment, Course, Enrollment, Lesson
+from courses.models import Assignment, Course, Enrollment, Lesson, Submission
 
 User = get_user_model()
 PASSWORD = "password123"
@@ -45,6 +45,13 @@ ASSIGNMENTS = [
     ("CS101", "Write 5 SQL queries", "2026-12-10"),
     ("MATH101", "Logic homework", "2026-12-05"),
 ]
+# graded works for my-standing demo (aruzhan CS101 avg = 80)
+SUBMISSIONS = [
+    ("aruzhan", "Draw an ERD", 85),
+    ("aruzhan", "Write 5 SQL queries", 75),
+    ("aruzhan", "Logic homework", 60),
+    ("timur", "Draw an ERD", 55),
+]
 
 
 class Command(BaseCommand):
@@ -80,5 +87,12 @@ class Command(BaseCommand):
         for code, title, due_date in ASSIGNMENTS:
             Assignment.objects.get_or_create(course=Course.objects.get(code=code), title=title,
                                              defaults={"due_date": due_date})
+
+        for student, title, score in SUBMISSIONS:
+            Submission.objects.get_or_create(
+                student=User.objects.get(username=student),
+                assignment=Assignment.objects.get(title=title),
+                defaults={"answer": "done", "score": score},
+            )
 
         self.stdout.write("done, password for all users: " + PASSWORD)
