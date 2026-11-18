@@ -121,6 +121,26 @@
   "pet.msg2": "Don't forget your homework",
   "pet.msg3": "You can do it!",
 
+  "sim.title": "What-if grade simulator",
+  "sim.midterm": "Midterm + Endterm ({w}%)",
+  "sim.expectedFinal": "Expected Final score ({w}%)",
+  "sim.total": "Total",
+  "sim.letter": "Grade",
+  "sim.gpa": "GPA points",
+  "sim.formula": "Total = 0.6 × Midterm + 0.4 × Final",
+
+  "sim.status.high": "Increased scholarship level (90%+)",
+  "sim.status.ok": "The scholarship is safe",
+  "sim.status.risk": "Warning! With this Final your total drops below 70% — risk of losing the scholarship!",
+  "sim.status.fail": "Course failed: the total is below 50%",
+
+  "sim.target70.need": "To finish the course with at least {goal}% and keep the scholarship, you need at least {score} on the Final.",
+  "sim.target70.done": "The scholarship is already safe: you will reach {goal}% with any Final score.",
+  "sim.target70.impossible": "Reaching {goal}% in this course is no longer possible — aim to pass the course.",
+  "sim.target90.need": "To reach {goal}% (increased scholarship), you need at least {score} on the Final.",
+  "sim.target90.done": "The increased scholarship level ({goal}%) is already guaranteed.",
+  "sim.target90.impossible": "Reaching {goal}% in this course is no longer possible — maximize your score for GPA.",
+
   "login.title": "Log in",
   "login.submit": "Log in",
   "login.noAccount": "Don't have an account?",
