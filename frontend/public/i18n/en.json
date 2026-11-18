@@ -120,6 +120,8 @@
   "pet.msg1": "Hi! Study well!",
   "pet.msg2": "Don't forget your homework",
   "pet.msg3": "You can do it!",
+  "pet.drag": "Wheee!",
+  "pet.dropped": "Nice spot!",
 
   "sim.title": "What-if grade simulator",
   "sim.midterm": "Midterm + Endterm ({w}%)",

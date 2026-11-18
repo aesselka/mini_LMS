@@ -1,18 +1,48 @@
-/* Капибара прикреплена к низу окна и не мешает кликать по сайту — кликабельна только она сама */
+/* Точка-якорь в центре капибары. Сама точка не мешает кликам по сайту — кликабельна только капибара. */
 .pet {
   position: fixed;
-  bottom: 0;
-  z-index: 50;
+  width: 0;
+  height: 0;
+  z-index: 60;
   pointer-events: none;
+  /* плавный шаг между тиками ходьбы */
+  transition:
+    left 80ms linear,
+    top 80ms linear;
+}
+
+/* после отпускания — плавно «прилипает» к краю */
+.pet.snapping {
+  transition:
+    left 0.4s cubic-bezier(0.3, 1.4, 0.6, 1),
+    top 0.4s cubic-bezier(0.3, 1.4, 0.6, 1);
+}
+
+/* пока тащат — без задержки */
+.pet.held {
+  transition: none;
+  z-index: 1000;
 }
 
 .capy {
+  position: absolute;
+  left: 0;
+  top: 0;
   display: block;
   padding: 0;
   border: none;
   background: none;
-  cursor: pointer;
+  cursor: grab;
   pointer-events: auto;
+  touch-action: none; /* на телефоне палец тащит капибару, а не прокручивает страницу */
+  user-select: none;
+  transform-origin: center;
+  transition: transform 0.25s ease; /* плавный поворот на углах */
+}
+
+.held .capy {
+  cursor: grabbing;
+  transition: none;
 }
 
 .capy:focus-visible {
@@ -25,16 +55,24 @@
   display: block;
 }
 
-/* идёт влево — зеркально отражаем рисунок */
-.capy svg.flip {
-  transform: scaleX(-1);
+/* в руках — покачивается */
+.held .capy svg {
+  animation: wiggle 0.35s ease-in-out infinite alternate;
+  filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.25));
 }
 
-/* облачко с фразой */
+@keyframes wiggle {
+  from {
+    transform: rotate(-8deg);
+  }
+  to {
+    transform: rotate(8deg);
+  }
+}
+
+/* ---------- облачко: всегда со стороны середины экрана ---------- */
 .bubble {
   position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
   padding: 6px 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -45,7 +83,32 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.bubble.right {
-  left: auto;
-  right: 0;
+/* на нижнем крае — над капибарой, на верхнем — под ней */
+.bubble[data-side='bottom'] {
+  bottom: 32px;
+}
+.bubble[data-side='top'] {
+  top: 32px;
+}
+.bubble[data-side='bottom'][data-align='center'],
+.bubble[data-side='top'][data-align='center'] {
+  transform: translateX(-50%);
+}
+.bubble[data-side='bottom'][data-align='start'],
+.bubble[data-side='top'][data-align='start'] {
+  left: -30px;
+}
+.bubble[data-side='bottom'][data-align='end'],
+.bubble[data-side='top'][data-align='end'] {
+  right: -30px;
+}
+
+/* на правой стене — слева от капибары, на левой — справа */
+.bubble[data-side='right'] {
+  right: 32px;
+  transform: translateY(-50%);
+}
+.bubble[data-side='left'] {
+  left: 32px;
+  transform: translateY(-50%);
 }
