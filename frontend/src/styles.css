@@ -211,3 +211,28 @@ dl.info dd {
   max-width: none;
   margin: 0;
 }
+
+.profile-page {
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 520px;
+}
+
+.teaching-course-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px; /* отступ между названием и кредитами */
+}
+
+.teaching-course-credits {
+  white-space: nowrap; /* запрет переноса "3 credits" на две строки */
+  flex-shrink: 0;      /* не сжимать бейдж с кредитами */
+  color: #6b7280;
+  font-size: 0.875rem;
+}
