@@ -30,6 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'role')
+        read_only_fields = ('role',)  #Блокирует попытку 
         extra_kwargs = {'password': {'write_only': True}}
 
     # 1. Email format validation
@@ -47,4 +48,5 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        validated_data['role'] = 'student'
         return User.objects.create_user(**validated_data)
