@@ -7,6 +7,8 @@ class Course(models.Model):
     code = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
     credits = models.PositiveSmallIntegerField(default=3)
+    # how many students can join
+    max_students = models.PositiveSmallIntegerField(default=30)
     # one teacher - many courses
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,

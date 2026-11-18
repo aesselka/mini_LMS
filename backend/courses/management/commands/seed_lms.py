@@ -70,6 +70,9 @@ class Command(BaseCommand):
                 defaults={"grade": grade},
             )
 
+        # small limit for demo: CS102 has 1 student, so it is full
+        Course.objects.filter(code="CS102").update(max_students=1)
+
         for code, order, title in LESSONS:
             Lesson.objects.get_or_create(course=Course.objects.get(code=code), order=order,
                                          defaults={"title": title})
