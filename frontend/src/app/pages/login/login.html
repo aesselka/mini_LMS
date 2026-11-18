@@ -9,8 +9,18 @@
 
     <label>
       {{ 'fields.password' | t }}
-      <input name="password" type="password" [(ngModel)]="password" autocomplete="current-password" />
+      <span class="pw-field">
+        <input
+          name="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          [(ngModel)]="password"
+          autocomplete="current-password"
+        />
+        <app-eye-toggle [visible]="showPassword()" (toggle)="showPassword.set(!showPassword())" />
+      </span>
     </label>
+
+    <a class="forgot" routerLink="/forgot-password">{{ 'login.forgot' | t }}</a>
 
     @if (error()) {
       <p class="error" role="alert">{{ error() | t }}</p>
