@@ -10,6 +10,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { authInterceptor } from './services/auth.interceptor';
 import { I18nService } from './services/i18n.service';
+import { ThemeService } from './services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     // загрузить переводы до первого показа страницы
     provideAppInitializer(() => inject(I18nService).init()),
+    // применить сохранённую тему до первого показа страницы
+    provideAppInitializer(() => inject(ThemeService).init()),
   ],
 };
