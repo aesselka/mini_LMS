@@ -1,0 +1,20 @@
+<div class="pet" [style.left.px]="x()">
+  @if (message()) {
+    <div class="bubble" [class.right]="bubbleOnRight()" role="status">{{ message() | t }} ♥</div>
+  }
+
+  <button type="button" class="capy" [attr.aria-label]="'pet.label' | t" [title]="'pet.label' | t" (click)="pet()">
+    <svg
+      [attr.viewBox]="viewBox"
+      [attr.width]="width"
+      [attr.height]="height"
+      [class.flip]="direction() === -1"
+      shape-rendering="crispEdges"
+      aria-hidden="true"
+    >
+      @for (p of frames[frame()]; track $index) {
+        <svg:rect [attr.x]="p.x" [attr.y]="p.y" width="1" height="1" [attr.fill]="p.color" />
+      }
+    </svg>
+  </button>
+</div>

@@ -1,0 +1,51 @@
+/* Капибара прикреплена к низу окна и не мешает кликать по сайту — кликабельна только она сама */
+.pet {
+  position: fixed;
+  bottom: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.capy {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.capy:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.capy svg {
+  display: block;
+}
+
+/* идёт влево — зеркально отражаем рисунок */
+.capy svg.flip {
+  transform: scaleX(-1);
+}
+
+/* облачко с фразой */
+.bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.bubble.right {
+  left: auto;
+  right: 0;
+}
