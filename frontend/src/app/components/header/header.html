@@ -14,6 +14,17 @@
     }
   </div>
 
+  <!-- Переключатель темы: светлая / тёмная -->
+  <button
+    type="button"
+    class="theme-btn"
+    [attr.aria-label]="(theme.theme() === 'dark' ? 'theme.toLight' : 'theme.toDark') | t"
+    [title]="(theme.theme() === 'dark' ? 'theme.toLight' : 'theme.toDark') | t"
+    (click)="theme.toggle()"
+  >
+    {{ theme.theme() === 'dark' ? '☀' : '☾' }}
+  </button>
+
   <!-- Кнопка-бургер: видна только на узких экранах (телефон) -->
   <button
     type="button"

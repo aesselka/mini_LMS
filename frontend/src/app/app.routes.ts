@@ -10,6 +10,8 @@ import { MyCourses } from './catalog/my-courses/my-courses';
 import { Login } from './pages/login/login';
 import { Profile } from './pages/profile/profile';
 import { Register } from './pages/register/register';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
+import { ResetPassword } from './pages/reset-password/reset-password';
 import { authGuard, guestGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -18,6 +20,8 @@ export const routes: Routes = [
   { path: 'login', component: Login, canActivate: [guestGuard] },
   { path: 'register', component: Register, canActivate: [guestGuard] },
   { path: 'profile', component: Profile, canActivate: [authGuard] },
+  { path: 'forgot-password', component: ForgotPassword, canActivate: [guestGuard] },
+  { path: 'reset-password', component: ResetPassword, canActivate: [guestGuard] },
 
   { path: 'courses', component: CourseList, canActivate: [authGuard] },
   { path: 'courses/:id', component: CourseDetail, canActivate: [authGuard] },

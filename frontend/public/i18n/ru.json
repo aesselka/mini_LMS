@@ -85,6 +85,42 @@
 
   "errors.sessionExpired": "Сессия истекла. Войдите снова.",
 
+  "theme.toDark": "Тёмная тема",
+  "theme.toLight": "Светлая тема",
+
+  "password.show": "Показать",
+  "password.hide": "Скрыть",
+
+  "strength.title": "Надёжность пароля",
+  "strength.weak": "слабый",
+  "strength.medium": "средний",
+  "strength.strong": "надёжный",
+  "strength.hintLength": "Не меньше 12 символов",
+  "strength.hintCase": "Заглавные и строчные буквы",
+  "strength.hintDigit": "Хотя бы одна цифра",
+  "strength.hintSymbol": "Символ, например ! @ # $",
+
+  "login.forgot": "Забыли пароль?",
+
+  "forgot.title": "Восстановление пароля",
+  "forgot.text": "Введите email, указанный при регистрации. Мы отправим ссылку для создания нового пароля.",
+  "forgot.submit": "Отправить ссылку",
+  "forgot.sent": "Если аккаунт с таким email существует, мы отправили на него ссылку для сброса пароля. Проверьте почту.",
+  "forgot.backToLogin": "Вернуться ко входу",
+
+  "reset.title": "Новый пароль",
+  "reset.newPassword": "Новый пароль",
+  "reset.submit": "Сохранить пароль",
+  "reset.done": "Пароль изменён. Теперь войдите с новым паролем.",
+  "reset.goToLogin": "Войти",
+  "reset.invalidLink": "Ссылка недействительна или устарела.",
+  "reset.requestNew": "Запросить новую ссылку",
+
+  "pet.label": "Капибара — нажми, чтобы погладить",
+  "pet.msg1": "Привет! Учись хорошо!",
+  "pet.msg2": "Не забудь про домашку",
+  "pet.msg3": "У тебя всё получится!",
+
   "login.title": "Вход",
   "login.submit": "Войти",
   "login.noAccount": "Нет аккаунта?",

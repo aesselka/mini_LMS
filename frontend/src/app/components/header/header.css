@@ -3,7 +3,7 @@
   align-items: center;
   gap: 24px;
   padding: 14px 32px;
-  background: #ffffff;
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
 
@@ -54,7 +54,7 @@
 .langs button {
   padding: 6px 12px;
   border: none;
-  background: #ffffff;
+  background: var(--surface);
   color: var(--text-muted);
   font: inherit;
   font-size: 13px;
@@ -68,7 +68,26 @@
 
 .langs button.active {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--on-primary);
+}
+
+/* Кнопка темы */
+.theme-btn {
+  order: 3;
+  width: 36px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.theme-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 /* Бургер скрыт на компьютере */
@@ -98,6 +117,10 @@
     padding: 6px 9px;
   }
 
+  .theme-btn {
+    order: 1;
+  }
+
   .burger {
     order: 2;
     display: inline-flex;
@@ -109,7 +132,7 @@
     padding: 0 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    background: #ffffff;
+    background: var(--surface);
     cursor: pointer;
   }
 

@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { I18nService } from '../../services/i18n.service';
+import { ThemeService } from '../../services/theme.service';
 import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
@@ -13,6 +14,7 @@ import { TranslatePipe } from '../../services/translate.pipe';
 export class Header {
   protected auth = inject(AuthService);
   protected i18n = inject(I18nService);
+  protected theme = inject(ThemeService);
   private router = inject(Router);
 
   // открыто ли меню на телефоне

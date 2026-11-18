@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, RegisterData } from '../../services/auth.service';
 import { TranslatePipe } from '../../services/translate.pipe';
+import { EyeToggle } from '../../components/eye-toggle/eye-toggle';
+import { PasswordStrength } from '../../components/password-strength/password-strength';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink, TranslatePipe],
+  imports: [FormsModule, RouterLink, TranslatePipe, PasswordStrength, EyeToggle],
   templateUrl: './register.html',
 })
 export class Register {
@@ -27,6 +29,8 @@ export class Register {
   error = signal(''); // ключ перевода
   serverErrors = signal<string[]>([]); // сообщения от бэкенда (например, "username уже занят")
   loading = signal(false);
+  showPassword = signal(false); // кнопка «Показать / Скрыть» пароль
+  showConfirm = signal(false); // глаз у поля «Повторите пароль»
 
   submit(): void {
     this.error.set('');

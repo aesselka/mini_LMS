@@ -63,6 +63,16 @@ export class AuthService {
     );
   }
 
+  // Сброс пароля, шаг 1: отправить письмо со ссылкой (POST /api/auth/password-reset/)
+  requestPasswordReset(email: string): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${API_URL}/auth/password-reset/`, { email });
+  }
+
+  // Сброс пароля, шаг 2: новый пароль по ссылке из письма (POST /api/auth/password-reset/confirm/)
+  confirmPasswordReset(uid: string, token: string, password: string): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${API_URL}/auth/password-reset/confirm/`, { uid, token, password });
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);

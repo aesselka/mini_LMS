@@ -146,3 +146,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+
+# ---------- Email и сброс пароля ----------
+DEFAULT_FROM_EMAIL = 'Mini LMS <no-reply@mini-lms.local>'
+# Адрес фронтенда — для ссылки «сбросить пароль» в письме
+FRONTEND_URL = 'http://localhost:4200'
+# Ссылка для сброса пароля действует 1 час
+PASSWORD_RESET_TIMEOUT = 60 * 60
