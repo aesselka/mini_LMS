@@ -9,10 +9,9 @@ class Course(models.Model):
     code = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
     credits = models.PositiveSmallIntegerField(default=3)
-<<<<<<< HEAD
-    # how many students can join
+    
+    # Максимальное количество студентов на курсе
     max_students = models.PositiveSmallIntegerField(default=30)
-=======
 
     # Настройка весов оценивания (по умолчанию 0.6 и 0.4)
     midterm_weight = models.DecimalField(
@@ -30,7 +29,6 @@ class Course(models.Model):
         verbose_name="Вес Final",
     )
 
->>>>>>> 36db6ed (Add course weighting, student scores validation, total score property, and update seed data)
     # one teacher - many courses
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
