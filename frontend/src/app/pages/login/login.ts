@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TranslatePipe } from '../../services/translate.pipe';
+import { EyeToggle } from '../../components/eye-toggle/eye-toggle';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, TranslatePipe],
+  imports: [FormsModule, RouterLink, TranslatePipe, EyeToggle],
   templateUrl: './login.html',
 })
 export class Login {
@@ -20,6 +21,7 @@ export class Login {
   // В error хранится КЛЮЧ перевода, чтобы ошибка тоже переводилась при смене языка
   error = signal('');
   loading = signal(false);
+  showPassword = signal(false); // кнопка «Показать / Скрыть» пароль
 
   submit(): void {
     this.error.set('');

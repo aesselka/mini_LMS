@@ -4,12 +4,14 @@ import re
 
 User = get_user_model()
 
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'role']
+        read_only_fields = ['role']
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -18,34 +20,38 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
-            role=validated_data.get('role', 'student')
+            role='student'
         )
         return user
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role']
-        
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'role')
+        read_only_fields = ('role',)
         extra_kwargs = {'password': {'write_only': True}}
 
-    # проверка формата и домена
+    # 1. Email format validation
     def validate_email(self, value):
         if not value:
-            raise serializers.ValidationError("Email обязателен для заполнения.")
+            raise serializers.ValidationError("Email field is required.")
         if not re.match(r"^[\w\.-]+@[\w\.-]+\.\w+$", value):
-            raise serializers.ValidationError("Введите корректный адрес электронной почты.")
+            raise serializers.ValidationError("Enter a valid email address.")
         return value.lower()
 
-    # мин 8 символов
+    # 2. Password strength validation
     def validate_password(self, value):
         if len(value) < 8:
-            raise serializers.ValidationError("Пароль должен содержать не менее 8 символов.")
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
         return value
 
     def create(self, validated_data):
+        validated_data['role'] = 'student'
         return User.objects.create_user(**validated_data)

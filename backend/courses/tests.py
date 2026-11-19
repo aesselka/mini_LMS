@@ -222,3 +222,109 @@ class GradesLessonsStatsTest(TestCase):
     def test_stats_closed_for_student(self):
         self.client.force_authenticate(self.student)
         self.assertEqual(self.client.get("/api/stats/").status_code, 403)
+
+
+class CapacityTranscriptTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.marat = User.objects.create_user("marat", password="x", role="teacher")
+        self.student = User.objects.create_user("aruzhan", password="x", role="student")
+        self.other_student = User.objects.create_user("timur", password="x", role="student")
+
+        self.db = Course.objects.create(code="CS101", title="Databases", credits=5,
+                                        max_students=1, teacher=self.marat)
+        self.eng = Course.objects.create(code="ENG101", title="English", credits=3,
+                                         teacher=self.marat)
+
+    # seats limit
+
+    def test_seats_left(self):
+        r = self.client.get(f"/api/courses/{self.db.id}/")
+        self.assertEqual(r.json()["seats_left"], 1)
+
+    def test_course_is_full(self):
+        Enrollment.objects.create(student=self.student, course=self.db)
+        self.client.force_authenticate(self.other_student)
+        r = self.client.post("/api/enrollments/", {"course": self.db.id})
+        self.assertEqual(r.status_code, 400)
+        self.assertIn("course is full", str(r.json()))
+        self.assertEqual(self.client.get(f"/api/courses/{self.db.id}/").json()["seats_left"], 0)
+
+    def test_limit_cannot_be_less_than_enrolled(self):
+        Enrollment.objects.create(student=self.student, course=self.eng)
+        Enrollment.objects.create(student=self.other_student, course=self.eng)
+        self.client.force_authenticate(self.marat)
+        r = self.client.patch(f"/api/courses/{self.eng.id}/", {"max_students": 1})
+        self.assertEqual(r.status_code, 400)
+
+    # transcript
+
+    def test_transcript_gpa_uses_credits(self):
+        Enrollment.objects.create(student=self.student, course=self.db, grade="A")   # 4.0 * 5
+        Enrollment.objects.create(student=self.student, course=self.eng, grade="C")  # 2.0 * 3
+        self.client.force_authenticate(self.student)
+        data = self.client.get("/api/transcript/").json()
+        # (4*5 + 2*3) / (5+3) = 26 / 8 = 3.25
+        self.assertEqual(data["gpa"], 3.25)
+        self.assertEqual(data["total_credits"], 8)
+
+    def test_transcript_skips_courses_without_grade(self):
+        Enrollment.objects.create(student=self.student, course=self.db, grade="B")
+        Enrollment.objects.create(student=self.student, course=self.eng)
+        self.client.force_authenticate(self.student)
+        data = self.client.get("/api/transcript/").json()
+        self.assertEqual(data["gpa"], 3.0)
+        self.assertEqual(data["graded_credits"], 5)
+
+    def test_transcript_empty(self):
+        self.client.force_authenticate(self.student)
+        self.assertIsNone(self.client.get("/api/transcript/").json()["gpa"])
+
+    def test_transcript_needs_login(self):
+        self.assertIn(self.client.get("/api/transcript/").status_code, (401, 403))
+
+
+class MyStandingTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.marat = User.objects.create_user("marat", password="x", role="teacher")
+        self.student = User.objects.create_user("aruzhan", password="x", role="student")
+        self.db = Course.objects.create(code="CS101", title="Databases", teacher=self.marat)
+        Enrollment.objects.create(student=self.student, course=self.db)
+        self.a1 = Assignment.objects.create(course=self.db, title="ERD", max_score=100)
+        self.a2 = Assignment.objects.create(course=self.db, title="SQL", max_score=50)
+
+    def standing(self):
+        self.client.force_authenticate(self.student)
+        return self.client.get("/api/courses/my-standing/").json()["courses"][0]
+
+    def test_average_in_percent(self):
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x", score=85)
+        Submission.objects.create(assignment=self.a2, student=self.student, answer="x", score=40)  # 80%
+        data = self.standing()
+        self.assertEqual(data["current_midterm_avg"], 82.5)  # (85 + 80) / 2
+        self.assertEqual(data["midterm_points"], 49.5)       # 82.5 * 0.6
+        self.assertEqual(data["graded"], 2)
+
+    def test_final_needed(self):
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x", score=80)
+        data = self.standing()
+        self.assertEqual(data["final_needed_for_70"], 55.0)  # (70 - 48) / 0.4
+        self.assertIsNone(data["final_needed_for_90"])  # needs 105, not possible
+
+    def test_not_graded_yet(self):
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x")
+        data = self.standing()
+        self.assertIsNone(data["current_midterm_avg"])
+        self.assertEqual(data["submitted"], 1)
+        self.assertEqual(data["assignments_total"], 2)
+
+    def test_other_student_scores_not_counted(self):
+        other = User.objects.create_user("timur", password="x", role="student")
+        Submission.objects.create(assignment=self.a1, student=other, answer="x", score=10)
+        Submission.objects.create(assignment=self.a1, student=self.student, answer="x", score=90)
+        self.assertEqual(self.standing()["current_midterm_avg"], 90.0)
+
+    def test_needs_login(self):
+        r = self.client.get("/api/courses/my-standing/")
+        self.assertIn(r.status_code, (401, 403))

@@ -6,11 +6,12 @@ import { Course, errorText, teacherName } from '../course';
 import { CourseService } from '../course-service';
 import { EnrollButton } from '../enroll-button/enroll-button';
 import { Session } from '../../core/session';
+import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
   selector: 'app-course-detail',
   standalone: true,
-  imports: [RouterLink, EnrollButton],
+  imports: [RouterLink, EnrollButton, TranslatePipe],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
@@ -34,7 +35,7 @@ export class CourseDetail {
         switchMap(id =>
           this.api.getCourse(id).pipe(
             catchError(err => {
-              this.error.set(err.status === 404 ? 'Course not found.' : errorText(err, 'Could not load the course.'));
+              this.error.set(err.status === 404 ? 'course.notFound' : errorText(err, 'course.loadError'));
               return of(null);
             }),
           ),

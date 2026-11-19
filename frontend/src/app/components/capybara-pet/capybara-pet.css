@@ -1,0 +1,121 @@
+/* Точка-якорь в центре капибары. Сама точка не мешает кликам по сайту — кликабельна только капибара. */
+.pet {
+  position: fixed;
+  width: 0;
+  height: 0;
+  z-index: 60;
+  pointer-events: none;
+  /* плавный шаг между тиками ходьбы */
+  transition:
+    left 80ms linear,
+    top 80ms linear;
+}
+
+/* после отпускания — плавно «прилипает» к краю */
+.pet.snapping {
+  transition:
+    left 0.4s cubic-bezier(0.3, 1.4, 0.6, 1),
+    top 0.4s cubic-bezier(0.3, 1.4, 0.6, 1);
+}
+
+/* пока тащат — без задержки */
+.pet.held {
+  transition: none;
+  z-index: 1000;
+}
+
+.capy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none; /* на телефоне палец тащит капибару, а не прокручивает страницу */
+  user-select: none;
+  transform-origin: center;
+  transition: transform 0.25s ease; /* плавный поворот на углах */
+}
+
+.held .capy {
+  cursor: grabbing;
+  transition: none;
+  outline: none; /* в руках — без рамки */
+}
+
+.capy:focus {
+  outline: none;
+}
+
+/* рамка только при управлении с клавиатуры */
+.capy:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.capy svg {
+  display: block;
+}
+
+/* в руках — качается, как маятник, будто её держат за загривок */
+.held .capy .held-svg {
+  transform-origin: 50% 0;
+  animation: swing 0.6s ease-in-out infinite alternate;
+  filter: drop-shadow(0 10px 6px rgba(0, 0, 0, 0.25));
+}
+
+@keyframes swing {
+  from {
+    transform: rotate(-10deg);
+  }
+  to {
+    transform: rotate(10deg);
+  }
+}
+
+/* ---------- облачко: всегда со стороны середины экрана ---------- */
+.bubble {
+  position: absolute;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* на нижнем крае — над капибарой, на верхнем — под ней */
+.bubble[data-side='bottom'] {
+  bottom: 32px;
+}
+.bubble[data-side='top'] {
+  top: 32px;
+}
+.bubble[data-side='bottom'][data-align='center'],
+.bubble[data-side='top'][data-align='center'] {
+  transform: translateX(-50%);
+}
+.bubble[data-side='bottom'][data-align='start'],
+.bubble[data-side='top'][data-align='start'] {
+  left: -30px;
+}
+.bubble[data-side='bottom'][data-align='end'],
+.bubble[data-side='top'][data-align='end'] {
+  right: -30px;
+}
+
+/* на правой стене — слева от капибары, на левой — справа */
+.bubble[data-side='right'] {
+  right: 32px;
+  transform: translateY(-50%);
+}
+.bubble[data-side='left'] {
+  left: 32px;
+  transform: translateY(-50%);
+}

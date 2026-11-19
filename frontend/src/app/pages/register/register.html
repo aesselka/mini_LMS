@@ -25,19 +25,38 @@
 
     <label>
       {{ 'fields.password' | t }} *
-      <input name="password" type="password" [(ngModel)]="form.password" autocomplete="new-password" />
+      <span class="pw-field">
+        <input
+          name="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          [(ngModel)]="form.password"
+          autocomplete="new-password"
+        />
+        <app-eye-toggle [visible]="showPassword()" (toggle)="showPassword.set(!showPassword())" />
+      </span>
     </label>
+
+    <!-- индикатор надёжности пароля -->
+    <app-password-strength [password]="form.password" />
 
     <label>
       {{ 'fields.confirmPassword' | t }} *
-      <input name="confirmPassword" type="password" [(ngModel)]="confirmPassword" autocomplete="new-password" />
+      <span class="pw-field">
+        <input
+          name="confirmPassword"
+          [type]="showConfirm() ? 'text' : 'password'"
+          [(ngModel)]="confirmPassword"
+          autocomplete="new-password"
+        />
+        <app-eye-toggle [visible]="showConfirm()" (toggle)="showConfirm.set(!showConfirm())" />
+      </span>
     </label>
 
     <label>
       {{ 'fields.role' | t }}
        <select [(ngModel)]="form.role" name="role">
-  <option value="student">Student</option>
-  <option value="teacher">Teacher</option>
+  <option value="student">{{ 'roles.student' | t }}</option>
+  <option value="teacher">{{ 'roles.teacher' | t }}</option>
   </select>
    </label>
 
@@ -47,7 +66,7 @@
     @if (serverErrors().length) {
       <ul class="error" role="alert">
         @for (msg of serverErrors(); track msg) {
-          <li>{{ msg }}</li>
+            <li>{{ msg | t }}</li>
         }
       </ul>
     }

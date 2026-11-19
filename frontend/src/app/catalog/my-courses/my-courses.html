@@ -1,22 +1,22 @@
 <section class="page">
   <header class="head">
-    <h1>My courses</h1>
-    <a routerLink="/courses" class="back">&larr; Course catalog</a>
+    <h1>{{ 'myCourses.title' | t }}</h1>
+    <a routerLink="/courses" class="back">&larr; {{ 'myCourses.back' | t }}</a>
   </header>
 
   @if (!session.token()) {
-    <div class="state">Please <a routerLink="/login">log in</a> to see your courses.</div>
+    <div class="state">{{ 'myCourses.needLogin' | t }} <a routerLink="/login">{{ 'nav.login' | t }}</a></div>
   } @else if (loading()) {
-    <div class="list" aria-busy="true" aria-label="Loading your courses">
+    <div class="list" aria-busy="true" [attr.aria-label]="'myCourses.loading' | t">
       @for (i of [1, 2, 3]; track i) { <div class="row skeleton"></div> }
     </div>
   } @else if (error()) {
-    <div class="state err" role="alert">{{ error() }}</div>
+    <div class="state err" role="alert">{{ error() | t }}</div>
   } @else if (rows().length === 0) {
-    <div class="state">You are not enrolled in any course yet. <a routerLink="/courses">Browse the catalog</a></div>
+    <div class="state">{{ 'myCourses.empty' | t }} <a routerLink="/courses">{{ 'myCourses.browse' | t }}</a></div>
   } @else {
-    <p class="count" aria-live="polite">{{ rows().length }} {{ rows().length === 1 ? 'course' : 'courses' }}</p>
-    @if (rowError()) { <p class="err" role="alert">{{ rowError() }}</p> }
+    <p class="count" aria-live="polite">{{ 'catalog.count' | t: { n: rows().length } }}</p>
+    @if (rowError()) { <p class="err" role="alert">{{ rowError() | t }}</p> }
     <ul class="list">
       @for (r of rows(); track r.enrollment.id) {
         <li class="row">
@@ -24,20 +24,20 @@
             @if (r.course) { <span class="code">{{ r.course.code }}</span> }
             <a class="title" [routerLink]="['/courses', r.enrollment.course]">{{ r.enrollment.course_title }}</a>
             <p class="meta">
-              @if (r.course) { {{ teacherName(r.course.teacher) }} &middot; {{ r.course.credits }} credits &middot; }
-              enrolled {{ r.enrollment.enroll_date }}
+              @if (r.course) { {{ teacherName(r.course.teacher) }} &middot; {{ 'catalog.credits' | t: { n: r.course.credits } }} &middot; }
+              {{ 'myCourses.enrolledOn' | t: { date: r.enrollment.enroll_date } }}
             </p>
           </div>
           <div class="side">
-            <span class="grade" [title]="'Grade'">{{ r.enrollment.grade || '—' }}</span>
+            <span class="grade" [title]="'myCourses.grade' | t">{{ r.enrollment.grade || '—' }}</span>
             @if (confirmId() === r.enrollment.id) {
               <span class="confirm">
-                Leave this course?
-                <button type="button" class="danger" [disabled]="busyId() === r.enrollment.id" (click)="leave(r)">Yes, leave</button>
-                <button type="button" class="plain" (click)="confirmId.set(null)">Cancel</button>
+                {{ 'myCourses.leaveConfirm' | t }}
+                <button type="button" class="danger" [disabled]="busyId() === r.enrollment.id" (click)="leave(r)">{{ 'myCourses.leaveYes' | t }}</button>
+                <button type="button" class="plain" (click)="confirmId.set(null)">{{ 'myCourses.cancel' | t }}</button>
               </span>
             } @else {
-              <button type="button" class="plain" (click)="confirmId.set(r.enrollment.id)">Leave</button>
+              <button type="button" class="plain" (click)="confirmId.set(r.enrollment.id)">{{ 'myCourses.leave' | t }}</button>
             }
           </div>
         </li>

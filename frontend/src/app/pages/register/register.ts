@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, RegisterData } from '../../services/auth.service';
 import { TranslatePipe } from '../../services/translate.pipe';
+import { EyeToggle } from '../../components/eye-toggle/eye-toggle';
+import { PasswordStrength } from '../../components/password-strength/password-strength';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink, TranslatePipe],
+  imports: [FormsModule, RouterLink, TranslatePipe, PasswordStrength, EyeToggle],
   templateUrl: './register.html',
 })
 export class Register {
@@ -27,6 +29,8 @@ export class Register {
   error = signal(''); // ключ перевода
   serverErrors = signal<string[]>([]); // сообщения от бэкенда (например, "username уже занят")
   loading = signal(false);
+  showPassword = signal(false); // кнопка «Показать / Скрыть» пароль
+  showConfirm = signal(false); // глаз у поля «Повторите пароль»
 
   submit(): void {
     this.error.set('');
@@ -43,6 +47,10 @@ export class Register {
     }
     if (f.password.length < 8) {
       this.error.set('errors.passwordShort');
+      return;
+    }
+    if (/^\d+$/.test(f.password)) {
+      this.error.set('errors.passwordNumeric');
       return;
     }
     if (f.password !== this.confirmPassword) {
@@ -63,9 +71,13 @@ export class Register {
           this.loading.set(false);
           if (err.status === 400 && err.error && typeof err.error === 'object') {
             // Django возвращает ошибки по полям: { "username": ["..."], "email": ["..."] }
-            const messages = Object.entries(err.error as Record<string, unknown>).map(
-              ([field, value]) => `${field}: ${Array.isArray(value) ? value.join(' ') : value}`,
-            );
+                        const messages = Object.entries(err.error as Record<string, unknown>).map(([field, value]) => {
+              const text = Array.isArray(value) ? value.join(' ') : String(value);
+              // известные ошибки сервера переводим, остальные показываем как есть
+              if (field === 'username' && text.includes('already exists')) return 'errors.usernameTaken';
+              if (field === 'password') return 'errors.passwordWeak';
+              return `${field}: ${text}`;
+            });
             this.serverErrors.set(messages);
           } else if (err.status === 0) {
             this.error.set('errors.network');

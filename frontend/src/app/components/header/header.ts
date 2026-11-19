@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { I18nService } from '../../services/i18n.service';
+import { ThemeService } from '../../services/theme.service';
 import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
@@ -13,7 +14,19 @@ import { TranslatePipe } from '../../services/translate.pipe';
 export class Header {
   protected auth = inject(AuthService);
   protected i18n = inject(I18nService);
+  protected theme = inject(ThemeService);
   private router = inject(Router);
+
+  // открыто ли меню на телефоне
+  protected menuOpen = signal(false);
+
+  toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
+
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
 
   logout(): void {
     this.auth.logout();

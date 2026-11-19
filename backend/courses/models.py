@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -7,6 +9,26 @@ class Course(models.Model):
     code = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
     credits = models.PositiveSmallIntegerField(default=3)
+    
+    # Максимальное количество студентов на курсе
+    max_students = models.PositiveSmallIntegerField(default=30)
+
+    # Настройка весов оценивания (по умолчанию 0.6 и 0.4)
+    midterm_weight = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        default=0.60,
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        verbose_name="Вес Midterm",
+    )
+    final_weight = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        default=0.40,
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        verbose_name="Вес Final",
+    )
+
     # one teacher - many courses
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -18,6 +40,22 @@ class Course(models.Model):
 
     class Meta:
         ordering = ["code"]
+
+    def clean(self):
+        super().clean()
+        # Валидация: сумма весов должна быть строго равна 1.0 (или 100%)
+        if (
+            self.midterm_weight is not None
+            and self.final_weight is not None
+            and float(self.midterm_weight + self.final_weight) != 1.0
+        ):
+            raise ValidationError(
+                "Сумма midterm_weight и final_weight должна быть строго равна 1.0 (например, 0.6 и 0.4)"
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.code} - {self.title}"
@@ -33,13 +71,38 @@ class Enrollment(models.Model):
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="enrollments")
     enroll_date = models.DateField(auto_now_add=True)
-    grade = models.CharField(max_length=2, blank=True, null=True)
+
+    # Оценки студента с валидацией диапазона от 0 до 100
+    midterm_score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0.00,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name="Балл за Midterm (0-100)",
+    )
+    final_score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0.00,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name="Балл за Final (0-100)",
+    )
+
+    grade = models.CharField(max_length=2, blank=True, null=True, verbose_name="Итоговая оценка")
 
     class Meta:
         # student can't join the same course twice
         constraints = [
             models.UniqueConstraint(fields=["student", "course"], name="unique_student_course"),
         ]
+
+    @property
+    def total_score(self):
+        """Автоматический расчет итогового балла на основе весов курса."""
+        return (
+            self.midterm_score * self.course.midterm_weight
+            + self.final_score * self.course.final_weight
+        )
 
     def __str__(self):
         return f"{self.student} -> {self.course.code}"
