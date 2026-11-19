@@ -4,7 +4,6 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TranslatePipe } from '../../services/translate.pipe';
 import { API_URL } from '../../services/api.config';
-import { GradeSimulatorComponent } from '../../components/grade-simulator/grade-simulator';
 
 export interface TranscriptItem {
   code: string;
@@ -22,7 +21,7 @@ export interface TranscriptResponse {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, GradeSimulatorComponent],
+  imports: [TranslatePipe, RouterLink],
   templateUrl: './profile.html'
 })
 export class Profile implements OnInit {
