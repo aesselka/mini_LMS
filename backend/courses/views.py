@@ -12,6 +12,7 @@ from .permissions import (IsAdmin, IsAdminOrTeacherOrReadOnly, can_manage_course
 from .serializers import (AssignmentSerializer, CourseSerializer, EnrollmentSerializer,
                           GradeSerializer, LessonSerializer, MyCourseSerializer,
                           ScoreSerializer, SubmissionSerializer)
+from accounts.permissions import IsStudent
 
 User = get_user_model()
 
@@ -42,8 +43,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return courses
 
     # GET /api/courses/my-standing/
-    @action(detail=False, methods=["get"], url_path="my-standing",
-            permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=["get"], url_path="my-standing", permission_classes=[IsStudent])
     def my_standing(self, request):
         enrollments = (Enrollment.objects.filter(student=request.user)
                        .select_related("course", "course__teacher"))
