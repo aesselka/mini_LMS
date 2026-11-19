@@ -5,13 +5,14 @@ import { Course, Enrollment, errorText, teacherName } from '../course';
 import { CourseService } from '../course-service';
 import { Session } from '../../core/session';
 import { TranslatePipe } from '../../services/translate.pipe';
+import { GradeSimulatorComponent } from '../../components/grade-simulator/grade-simulator';
 
 interface Row { enrollment: Enrollment; course: Course | undefined; }
 
 @Component({
   selector: 'app-my-courses',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, GradeSimulatorComponent],
   templateUrl: './my-courses.html',
   styleUrl: './my-courses.css',
 })
