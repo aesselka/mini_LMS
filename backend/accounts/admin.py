@@ -1,37 +1,55 @@
 import csv
-from django.http import HttpResponse
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
+from django.http import HttpResponse
 from .models import User
 
-# 1. Функция экспорта выбранных пользователей в CSV
-@admin.action(description='Экспортировать выбранных пользователей в CSV')
+
+@admin.action(description="Экспортировать выбранных пользователей в CSV")
 def export_to_csv(modeladmin, request, queryset):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="users_export.csv"'
-    
-    writer = csv.writer(response)
-    # Записываем заголовки столбцов
-    writer.writerow(['ID', 'Username', 'Email', 'Role', 'Staff Status'])
-    
-    # Записываем данные каждого выбранного пользователя
+    if not queryset.exists():
+        modeladmin.message_user(
+            request,
+            "Выберите хотя бы одного пользователя для экспорта.",
+            level=messages.WARNING,
+        )
+        return
+
+    response = HttpResponse(content_type="text/csv; charset=utf-8-sig")
+    response["Content-Disposition"] = 'attachment; filename="users_export.csv"'
+    response.write("sep=;\n")
+
+    writer = csv.writer(response, delimiter=";")
+    writer.writerow(["ID", "Username", "Email", "Role", "Staff Status"])
+
     for user in queryset:
-        writer.writerow([user.id, user.username, user.email, user.role, user.is_staff])
-        
+        writer.writerow([
+            user.id,
+            user.username,
+            user.email,
+            user.role,
+            user.is_staff,
+        ])
+
+    modeladmin.message_user(
+        request,
+        f"Экспортировано пользователей: {queryset.count()}.",
+        level=messages.SUCCESS,
+    )
     return response
 
-# 2. Настройка админки пользователей
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    model = User
-    
-    # Отображение поля role в интерфейсе админки
+    list_display = ("username", "email", "first_name", "last_name", "role", "is_staff")
+    list_filter = ("role", "is_staff", "is_superuser", "is_active")
+    search_fields = ("username", "email", "first_name", "last_name")
+
     fieldsets = UserAdmin.fieldsets + (
-        ('Role Information', {'fields': ('role',)}),
+        ("Role Information", {"fields": ("role",)}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Role Information', {'fields': ('role',)}),
+        ("Role Information", {"fields": ("role",)}),
     )
-    
-    # Добавляем действие экспорта в список доступных кнопок в админке
+
     actions = [export_to_csv]

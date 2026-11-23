@@ -1,7 +1,9 @@
+from decimal import Decimal
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 
 class Course(models.Model):
@@ -9,7 +11,7 @@ class Course(models.Model):
     code = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
     credits = models.PositiveSmallIntegerField(default=3)
-    
+
     # Максимальное количество студентов на курсе
     max_students = models.PositiveSmallIntegerField(default=30)
 
@@ -170,3 +172,87 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"{self.student} -> {self.assignment.title}"
+
+
+class Notification(models.Model):
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        verbose_name="Получатель",
+    )
+    message = models.CharField(max_length=255, verbose_name="Текст уведомления")
+    is_read = models.BooleanField(default=False, verbose_name="Прочитано")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Уведомление"
+        verbose_name_plural = "Уведомления"
+
+    def __str__(self):
+        return f"{self.recipient}: {self.message}"
+
+
+def notify_deadline_approaching(assignment, days_left=1):
+    """Напоминает студентам (без сдачи) и преподавателю о скором due_date."""
+    if not assignment.due_date:
+        return
+
+    diff_days = (assignment.due_date - timezone.localdate()).days
+    if 0 <= diff_days <= days_left:
+        submitted_student_ids = set(
+            assignment.submissions.values_list("student_id", flat=True)
+        )
+        enrollments = assignment.course.enrollments.select_related("student")
+
+        for enrollment in enrollments:
+            if enrollment.student_id not in submitted_student_ids:
+                Notification.objects.get_or_create(
+                    recipient=enrollment.student,
+                    message=(
+                        f"Скоро дедлайн ({assignment.due_date}) по заданию "
+                        f"«{assignment.title}» ({assignment.course.code})."
+                    ),
+                )
+
+        if assignment.course.teacher:
+            Notification.objects.get_or_create(
+                recipient=assignment.course.teacher,
+                message=(
+                    f"Дедлайн {assignment.due_date} по заданию «{assignment.title}» "
+                    f"({assignment.course.code})."
+                ),
+            )
+
+
+def notify_grade_and_threshold(enrollment, passing_score=Decimal("50.00")):
+    """Уведомляет об оценке и предупреждает при нехватке баллов до проходного порога."""
+    total = Decimal(str(enrollment.total_score)).quantize(Decimal("0.01"))
+
+    Notification.objects.create(
+        recipient=enrollment.student,
+        message=(
+            f"Обновлены баллы по курсу {enrollment.course.code}: "
+            f"Midterm {enrollment.midterm_score}, Final {enrollment.final_score}, "
+            f"итоговый балл {total}."
+        ),
+    )
+
+    if total < passing_score:
+        missing = (passing_score - total).quantize(Decimal("0.01"))
+        Notification.objects.create(
+            recipient=enrollment.student,
+            message=(
+                f"Не хватает {missing} балл(ов) до проходного порога ({passing_score}) "
+                f"по курсу {enrollment.course.code}."
+            ),
+        )
+        if enrollment.course.teacher:
+            Notification.objects.create(
+                recipient=enrollment.course.teacher,
+                message=(
+                    f"Студенту {enrollment.student} не хватает {missing} балл(ов) "
+                    f"до проходного порога ({passing_score}) по курсу {enrollment.course.code}."
+                ),
+            )
