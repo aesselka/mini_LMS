@@ -6,10 +6,10 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
-from .models import GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Submission
+from .models import GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Notification, Submission
 from .permissions import (IsAdmin, IsAdminOrTeacherOrReadOnly, can_manage_course,
                           is_admin, is_teacher, visible_courses)
-from .serializers import (AssignmentSerializer, CourseSerializer, EnrollmentSerializer,
+from .serializers import (AssignmentSerializer, CourseSerializer, EnrollmentSerializer, NotificationSerializer,
                           GradeSerializer, LessonSerializer, MyCourseSerializer,
                           ScoreSerializer, SubmissionSerializer)
 from accounts.permissions import IsStudent
@@ -294,3 +294,30 @@ def stats(request):
         "popular_courses": popular,
         "courses": courses,
     })
+
+
+# /api/notifications/ — уведомления текущего пользователя (колокольчик на сайте)
+#   GET  /api/notifications/            — список, новые сверху
+#   POST /api/notifications/{id}/read/  — отметить одно прочитанным
+#   POST /api/notifications/read-all/   — отметить все прочитанными
+class NotificationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get_queryset(self):
+        # каждый видит только свои уведомления; последние 50
+        return Notification.objects.filter(recipient=self.request.user).order_by("-created_at")[:50]
+
+    @action(detail=True, methods=["post"])
+    def read(self, request, pk=None):
+        updated = Notification.objects.filter(pk=pk, recipient=request.user).update(is_read=True)
+        if not updated:
+            return Response({"detail": "Not found."}, status=404)
+        return Response({"id": int(pk), "is_read": True})
+
+    @action(detail=False, methods=["post"], url_path="read-all")
+    def read_all(self, request):
+        count = Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+        return Response({"updated": count})
+

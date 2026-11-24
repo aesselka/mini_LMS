@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Submission
+from .models import GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Notification, Submission
 from .permissions import can_manage_course, is_admin
 
 User = get_user_model()
@@ -169,3 +169,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class ScoreSerializer(serializers.Serializer):
     score = serializers.IntegerField(min_value=0)
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ["id", "message", "is_read", "created_at"]
+        read_only_fields = fields
+
