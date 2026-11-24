@@ -26,6 +26,22 @@ export class PreferencesService {
     localStorage.setItem(PET_KEY, enabled ? 'on' : 'off');
   }
 
+  // ---------- счётчики для достижений ----------
+  readonly petClicks = signal(Number(localStorage.getItem('lms_pet_clicks') || 0)); // сколько раз гладили капибару
+  readonly searchUsed = signal(localStorage.getItem('lms_search_used') === '1'); // открывали ли поиск Ctrl+K
+
+  countPet(): void {
+    const next = this.petClicks() + 1;
+    this.petClicks.set(next);
+    localStorage.setItem('lms_pet_clicks', String(next));
+  }
+
+  markSearchUsed(): void {
+    if (this.searchUsed()) return;
+    this.searchUsed.set(true);
+    localStorage.setItem('lms_search_used', '1');
+  }
+
   // ---------- аватар ----------
   private avatars = signal<Record<string, Avatar>>(this.readAvatars());
 

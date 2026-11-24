@@ -1,8 +1,19 @@
-<app-header />
+<!-- боковое меню — только для вошедших -->
+@if (auth.isLoggedIn()) {
+  <app-sidebar />
+}
 
-<main class="page">
-  <router-outlet />
-</main>
+<div class="shell" [class.with-sidebar]="auth.isLoggedIn()">
+  <app-header />
+
+  <main class="page">
+    <router-outlet />
+  </main>
+</div>
+
+<!-- окно быстрого поиска (Ctrl+K) и всплывающие уведомления -->
+<app-command-palette />
+<app-toaster />
 
 <!-- питомец-капибара: можно выключить в Настройках -->
 @if (prefs.petEnabled()) {

@@ -1,0 +1,30 @@
+<section class="ach-page">
+  <header class="hero">
+    <app-avatar [size]="72" [preview]="capy" />
+    <div class="hero-text">
+      <h1>{{ 'ach.title' | t }}</h1>
+      <p class="capy-line">«{{ capyLine() | t }}»</p>
+      <div class="overall">
+        <div class="bar"><span [style.width.%]="overall()"></span></div>
+        <strong>{{ 'ach.progress' | t: { n: ach.unlockedCount(), total: total() } }}</strong>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    @for (a of sorted(); track a.id) {
+      <article class="badge-card" [class.unlocked]="a.unlocked">
+        <div class="icon" aria-hidden="true">{{ a.icon }}</div>
+        <h2>{{ a.titleKey | t }}</h2>
+        <p class="desc">{{ a.descKey | t }}</p>
+
+        @if (a.unlocked) {
+          <p class="got">✓ {{ 'ach.got' | t }}</p>
+        } @else {
+          <div class="bar small"><span [style.width.%]="a.percent"></span></div>
+          <p class="count">{{ format(a, a.value) }} / {{ format(a, a.target) }}</p>
+        }
+      </article>
+    }
+  </div>
+</section>

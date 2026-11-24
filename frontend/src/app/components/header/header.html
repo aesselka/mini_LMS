@@ -1,5 +1,24 @@
-<header class="header">
-  <a class="brand" routerLink="/" (click)="closeMenu()">Mini LMS</a>
+<header class="topbar">
+  @if (auth.isLoggedIn()) {
+    <!-- ☰ открывает боковое меню (видна только на телефоне) -->
+    <button type="button" class="icon-btn burger" [attr.aria-label]="'nav.menu' | t" (click)="layout.toggleMenu()">
+      <app-icon name="menu" />
+    </button>
+
+    <!-- кнопка поиска: открывает окно Ctrl+K -->
+    <button type="button" class="search-btn" (click)="layout.openPalette()">
+      <app-icon name="search" [size]="18" />
+      <span class="search-text">{{ 'search.placeholder' | t }}</span>
+      <kbd>Ctrl K</kbd>
+    </button>
+  } @else {
+    <a class="brand" routerLink="/login">
+      <app-avatar [size]="32" [preview]="logo" />
+      <span>Mini LMS</span>
+    </a>
+  }
+
+  <div class="spacer"></div>
 
   <div class="langs" role="group" aria-label="Language">
     @for (lang of i18n.languages; track lang) {
@@ -14,54 +33,32 @@
     }
   </div>
 
-  <!-- Переключатель темы: светлая / тёмная -->
   <button
     type="button"
-    class="theme-btn"
+    class="icon-btn"
     [attr.aria-label]="(theme.theme() === 'dark' ? 'theme.toLight' : 'theme.toDark') | t"
     [title]="(theme.theme() === 'dark' ? 'theme.toLight' : 'theme.toDark') | t"
     (click)="theme.toggle()"
   >
-    {{ theme.theme() === 'dark' ? '☀' : '☾' }}
+    <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
   </button>
 
-  <!-- Аватар справа, рядом с темой: ведёт в профиль (настройки — кнопка ⚙ в профиле) -->
   @if (auth.isLoggedIn()) {
+    <app-bell />
+
     <a
       class="avatar-link"
       routerLink="/profile"
       routerLinkActive="active"
       [attr.aria-label]="'nav.profile' | t"
       [title]="'nav.profile' | t"
-      (click)="closeMenu()"
     >
       <app-avatar [size]="34" />
     </a>
-  }
-
-  <!-- Кнопка-бургер: видна только на узких экранах (телефон) -->
-  <button
-    type="button"
-    class="burger"
-    aria-controls="main-nav"
-    [attr.aria-expanded]="menuOpen()"
-    [attr.aria-label]="'nav.menu' | t"
-    (click)="toggleMenu()"
-  >
-    <span></span><span></span><span></span>
-  </button>
-
-  <!-- Клик по любой ссылке закрывает меню на телефоне -->
-  <nav id="main-nav" class="nav" [class.open]="menuOpen()" (click)="closeMenu()">
-    @if (auth.isLoggedIn()) {
-      <a routerLink="/courses" routerLinkActive="active">{{ 'nav.courses' | t }}</a>
-      <a routerLink="/my-courses" routerLinkActive="active">{{ 'nav.my_courses' | t }}</a>
-      @if (auth.user()?.role === 'teacher') {
-        <a routerLink="/teacher" routerLinkActive="active">{{ 'nav.cabinet' | t }}</a>
-      }
-    } @else {
+  } @else {
+    <nav class="guest-nav">
       <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
-      <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>
-    }
-  </nav>
+      <a routerLink="/register" class="btn-primary">{{ 'nav.register' | t }}</a>
+    </nav>
+  }
 </header>

@@ -1,65 +1,111 @@
-.header {
+/* Верхняя панель: прилипает к верху при прокрутке */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 14px 32px;
-  background: var(--surface);
+  gap: 12px;
+  height: 64px;
+  padding: 0 24px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
 }
 
-.brand {
-  white-space: nowrap;
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--primary);
-  text-decoration: none;
-}
-
-/* На компьютере: ссылки в одну строку между логотипом и языками */
-.nav {
-  order: 1;
-  display: flex;
-  align-items: center;
-  gap: 18px;
+.spacer {
   flex: 1;
 }
 
-.langs {
-  order: 2;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 19px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-decoration: none;
 }
 
-.nav a,
-.link-btn {
+/* ---------- поиск ---------- */
+.search-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 1 380px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
   color: var(--text-muted);
-  text-decoration: none;
   font: inherit;
-  background: none;
-  border: none;
-  padding: 0;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.nav a:hover,
-.link-btn:hover,
-.nav a.active {
+.search-btn:hover {
+  border-color: var(--primary);
+}
+
+.search-text {
+  flex: 1;
+  overflow: hidden;
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 11px;
+}
+
+/* ---------- кнопки-иконки (тема, ☰) ---------- */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  border-color: var(--primary);
   color: var(--primary);
 }
 
+.burger {
+  display: none;
+}
+
+/* ---------- языки ---------- */
 .langs {
   display: flex;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .langs button {
-  padding: 6px 12px;
+  padding: 0 11px;
+  height: 38px;
   border: none;
   background: var(--surface);
   color: var(--text-muted);
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -72,12 +118,10 @@
   color: var(--on-primary);
 }
 
-/* Аватар справа, рядом с кнопкой темы */
+/* ---------- аватар ---------- */
 .avatar-link {
-  order: 4;
   display: inline-flex;
   border-radius: 50%;
-  outline-offset: 2px;
 }
 
 .avatar-link:hover,
@@ -85,103 +129,68 @@
   box-shadow: 0 0 0 2px var(--primary);
 }
 
-/* Кнопка темы */
-.theme-btn {
-  order: 3;
-  width: 36px;
-  height: 32px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-  color: var(--text);
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
+/* ---------- для гостя ---------- */
+.guest-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.theme-btn:hover {
-  border-color: var(--primary);
+.guest-nav a {
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.guest-nav a:hover,
+.guest-nav a.active {
   color: var(--primary);
 }
 
-/* Бургер скрыт на компьютере */
-.burger {
-  display: none;
+.guest-nav a.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
-/* ---------- Телефон и узкий планшет ---------- */
-@media (max-width: 768px) {
-  .header {
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 10px 16px;
+.guest-nav a.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+/* ---------- телефон ---------- */
+@media (max-width: 900px) {
+  .burger {
+    display: grid;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    gap: 8px;
+    padding: 0 12px;
   }
 
-  /* первая строка: логотип | языки | бургер */
-  .brand {
-    order: 0;
-    flex: 1;
+  .search-btn {
+    flex: 0 0 40px;
+    justify-content: center;
+    padding: 0;
   }
 
-  .langs {
-    order: 1;
+  .search-text,
+  .search-btn kbd {
+    display: none;
   }
 
   .langs button {
-    padding: 6px 9px;
+    padding: 0 8px;
   }
 
-  .theme-btn,
-  .avatar-link {
-    order: 1;
-  }
-
-  .burger {
-    order: 2;
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    width: 40px;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    cursor: pointer;
-  }
-
-  .burger span {
-    display: block;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--text);
-  }
-
-  /* вторая строка: выпадающее меню, скрыто пока не нажат бургер */
-  .nav {
-    order: 3;
+  .brand span {
     display: none;
-    flex-basis: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    border-top: 1px solid var(--border);
   }
 
-  .nav.open {
-    display: flex;
-  }
-
-  .nav a,
-  .link-btn {
-    padding: 12px 4px;
-    font-size: 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav > :last-child {
-    border-bottom: none;
+  .guest-nav a {
+    padding: 8px;
   }
 }

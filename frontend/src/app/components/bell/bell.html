@@ -1,0 +1,49 @@
+<button
+  type="button"
+  class="bell-btn"
+  [class.active]="open()"
+  [attr.aria-expanded]="open()"
+  [attr.aria-label]="'bell.title' | t"
+  [title]="'bell.title' | t"
+  (click)="toggle()"
+>
+  <app-icon name="bell" />
+  @if (notifications.unreadCount() > 0) {
+    <span class="badge-count">{{ notifications.unreadCount() > 9 ? '9+' : notifications.unreadCount() }}</span>
+  }
+</button>
+
+@if (open()) {
+  <div class="panel" role="dialog" [attr.aria-label]="'bell.title' | t">
+    <div class="panel-head">
+      <strong>{{ 'bell.title' | t }}</strong>
+      @if (notifications.unreadCount() > 0) {
+        <button type="button" class="link" (click)="notifications.markAllRead()">
+          <app-icon name="check" [size]="14" />
+          {{ 'bell.readAll' | t }}
+        </button>
+      }
+    </div>
+
+    @if (notifications.items().length) {
+      <ul class="list">
+        @for (n of notifications.items(); track n.id) {
+          <li>
+            <button type="button" class="item" [class.unread]="!n.is_read" (click)="read(n)">
+              <span class="dot" aria-hidden="true"></span>
+              <span class="text">
+                <span class="message">{{ n.message }}</span>
+                <span class="time">{{ timeAgo(n.created_at) }}</span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="empty">
+        <span class="empty-icon" aria-hidden="true">🔕</span>
+        <p>{{ (notifications.loadError() ? 'errors.network' : 'bell.empty') | t }}</p>
+      </div>
+    }
+  </div>
+}
