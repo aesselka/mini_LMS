@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { TranslatePipe } from '../../services/translate.pipe';
+import { PreferencesService } from '../../services/preferences.service';
 
 // Пиксельная капибара-питомец (как vscode-pets).
 // • Гуляет по всему периметру окна: по низу, по правой стене, вверх ногами по верху, по левой стене.
@@ -132,6 +133,8 @@ export class CapybaraPet implements OnInit, OnDestroy {
   protected message = signal(''); // ключ перевода фразы в облачке
   protected bubbleAlign = signal<'start' | 'center' | 'end'>('center');
 
+  private prefs = inject(PreferencesService);
+
   private s = 0; // пройденное расстояние по периметру, px
   private direction: 1 | -1 = 1; // 1 — против часовой стрелки (низ → право → верх → лево), -1 — обратно
   private ticks = 0;
@@ -176,6 +179,7 @@ export class CapybaraPet implements OnInit, OnDestroy {
     }
     this.say(MESSAGES[Math.floor(Math.random() * MESSAGES.length)]);
     this.pauseTicks = 30;
+    this.prefs.countPet(); // для достижения «Друг капибары»
   }
 
   // ---------- перетаскивание ----------

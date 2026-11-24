@@ -1,0 +1,45 @@
+<aside class="sidebar" [class.open]="layout.menuOpen()" [attr.aria-label]="'nav.menu' | t">
+  <a class="brand" routerLink="/courses" (click)="layout.closeMenu()">
+    <app-avatar [size]="36" [preview]="logo" />
+    <span>Mini LMS</span>
+  </a>
+
+  <!-- клик по любой ссылке закрывает меню на телефоне -->
+  <nav class="side-nav" (click)="layout.closeMenu()">
+    <a routerLink="/courses" routerLinkActive="active">
+      <app-icon name="book" />
+      <span>{{ 'nav.courses' | t }}</span>
+    </a>
+    <a routerLink="/my-courses" routerLinkActive="active">
+      <app-icon name="bookmark" />
+      <span>{{ 'nav.my_courses' | t }}</span>
+    </a>
+    @if (auth.user()?.role === 'student') {
+      <a routerLink="/achievements" routerLinkActive="active">
+        <app-icon name="trophy" />
+        <span>{{ 'nav.achievements' | t }}</span>
+      </a>
+    }
+    @if (auth.user()?.role === 'teacher') {
+      <a routerLink="/teacher" routerLinkActive="active">
+        <app-icon name="briefcase" />
+        <span>{{ 'nav.cabinet' | t }}</span>
+      </a>
+    }
+    <a routerLink="/profile" routerLinkActive="active">
+      <app-icon name="user" />
+      <span>{{ 'nav.profile' | t }}</span>
+    </a>
+  </nav>
+
+  <button type="button" class="search-hint" (click)="layout.openPalette()">
+    <app-icon name="search" [size]="16" />
+    <span>{{ 'search.open' | t }}</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+</aside>
+
+<!-- затемнение под меню на телефоне -->
+@if (layout.menuOpen()) {
+  <div class="backdrop" (click)="layout.closeMenu()" aria-hidden="true"></div>
+}

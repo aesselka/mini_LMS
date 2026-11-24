@@ -339,6 +339,17 @@ select {
   background: var(--error-bg);
 }
 
+/* ---------- Каркас: боковое меню слева (для вошедших) ---------- */
+.shell {
+  min-height: 100vh;
+}
+
+@media (min-width: 901px) {
+  .shell.with-sidebar {
+    margin-left: 240px;
+  }
+}
+
 /* ---------- Телефон ---------- */
 @media (max-width: 600px) {
   .page {

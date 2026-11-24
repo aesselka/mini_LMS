@@ -13,6 +13,7 @@ import { Register } from './pages/register/register';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { ResetPassword } from './pages/reset-password/reset-password';
 import { Settings } from './pages/settings/settings';
+import { Achievements } from './pages/achievements/achievements';
 import { authGuard, guestGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'register', component: Register, canActivate: [guestGuard] },
   { path: 'profile', component: Profile, canActivate: [authGuard] },
   { path: 'settings', component: Settings, canActivate: [authGuard] },
+  { path: 'achievements', component: Achievements, canActivate: [authGuard] },
   { path: 'forgot-password', component: ForgotPassword, canActivate: [guestGuard] },
   { path: 'reset-password', component: ResetPassword, canActivate: [guestGuard] },
 

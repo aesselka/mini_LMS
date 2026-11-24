@@ -1,0 +1,49 @@
+@if (layout.paletteOpen()) {
+  <div class="overlay" (click)="layout.closePalette()" aria-hidden="true"></div>
+
+  <div class="palette" role="dialog" aria-modal="true" [attr.aria-label]="'search.open' | t">
+    <div class="input-row">
+      <app-icon name="search" />
+      <input
+        #searchInput
+        type="text"
+        [value]="query()"
+        [placeholder]="'search.placeholder' | t"
+        [attr.aria-label]="'search.placeholder' | t"
+        autocomplete="off"
+        (input)="onInput(searchInput.value)"
+        (keydown)="onKeydown($event)"
+      />
+      <kbd>Esc</kbd>
+    </div>
+
+    <div class="results">
+      @for (g of groups(); track g.group) {
+        <p class="group-title">{{ 'search.group.' + g.group | t }}</p>
+        @for (item of g.items; track $index) {
+          <button
+            type="button"
+            class="option"
+            [class.active]="indexOf(item) === active()"
+            (mouseenter)="active.set(indexOf(item))"
+            (click)="run(item)"
+          >
+            <app-icon [name]="item.icon" [size]="18" />
+            <span class="label">{{ item.label }}</span>
+            @if (item.hint) {
+              <span class="code">{{ item.hint }}</span>
+            }
+            <app-icon class="enter" name="arrow" [size]="16" />
+          </button>
+        }
+      } @empty {
+        <p class="nothing">{{ 'search.nothing' | t: { q: query() } }}</p>
+      }
+    </div>
+
+    <div class="footer">
+      <span><kbd>↑</kbd> <kbd>↓</kbd> {{ 'search.navigate' | t }}</span>
+      <span><kbd>Enter</kbd> {{ 'search.select' | t }}</span>
+    </div>
+  </div>
+}
