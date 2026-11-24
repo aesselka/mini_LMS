@@ -25,6 +25,20 @@
     {{ theme.theme() === 'dark' ? '☀' : '☾' }}
   </button>
 
+  <!-- Аватар справа, рядом с темой: ведёт в профиль (настройки — кнопка ⚙ в профиле) -->
+  @if (auth.isLoggedIn()) {
+    <a
+      class="avatar-link"
+      routerLink="/profile"
+      routerLinkActive="active"
+      [attr.aria-label]="'nav.profile' | t"
+      [title]="'nav.profile' | t"
+      (click)="closeMenu()"
+    >
+      <app-avatar [size]="34" />
+    </a>
+  }
+
   <!-- Кнопка-бургер: видна только на узких экранах (телефон) -->
   <button
     type="button"
@@ -45,8 +59,6 @@
       @if (auth.user()?.role === 'teacher') {
         <a routerLink="/teacher" routerLinkActive="active">{{ 'nav.cabinet' | t }}</a>
       }
-      <a routerLink="/profile" routerLinkActive="active">{{ 'nav.profile' | t }}</a>
-      <button type="button" class="link-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
     } @else {
       <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | t }}</a>
       <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | t }}</a>

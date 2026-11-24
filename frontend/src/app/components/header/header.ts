@@ -1,13 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { AvatarView } from '../avatar/avatar';
 import { I18nService } from '../../services/i18n.service';
 import { ThemeService } from '../../services/theme.service';
 import { TranslatePipe } from '../../services/translate.pipe';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, AvatarView],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
