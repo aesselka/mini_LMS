@@ -292,6 +292,53 @@ select {
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
+/* Профиль: аватар и ссылка на настройки */
+.profile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.settings-link {
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.settings-link:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.logout-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--error);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: var(--error-bg);
+}
+
 /* ---------- Телефон ---------- */
 @media (max-width: 600px) {
   .page {
