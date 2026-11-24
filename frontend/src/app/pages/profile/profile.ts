@@ -3,6 +3,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TranslatePipe } from '../../services/translate.pipe';
+import { AvatarView } from '../../components/avatar/avatar';
 import { API_URL } from '../../services/api.config';
 
 export interface TranscriptItem {
@@ -21,13 +22,19 @@ export interface TranscriptResponse {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [TranslatePipe, RouterLink],
+  imports: [TranslatePipe, RouterLink, AvatarView],
   templateUrl: './profile.html'
 })
 export class Profile implements OnInit {
   protected auth = inject(AuthService);
   private http = inject(HttpClient);
   private router = inject(Router);
+
+  // выход из аккаунта (кнопка в профиле)
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 
   error = signal('');
   

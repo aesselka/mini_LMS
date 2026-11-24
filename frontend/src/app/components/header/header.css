@@ -8,6 +8,7 @@
 }
 
 .brand {
+  white-space: nowrap;
   font-weight: 700;
   font-size: 20px;
   color: var(--primary);
@@ -71,6 +72,19 @@
   color: var(--on-primary);
 }
 
+/* Аватар справа, рядом с кнопкой темы */
+.avatar-link {
+  order: 4;
+  display: inline-flex;
+  border-radius: 50%;
+  outline-offset: 2px;
+}
+
+.avatar-link:hover,
+.avatar-link.active {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
 /* Кнопка темы */
 .theme-btn {
   order: 3;
@@ -117,7 +131,8 @@
     padding: 6px 9px;
   }
 
-  .theme-btn {
+  .theme-btn,
+  .avatar-link {
     order: 1;
   }
 

@@ -6,7 +6,13 @@
   }
 
   @if (auth.user(); as user) {
-    <div class="avatar">{{ (user.first_name || user.username).charAt(0).toUpperCase() }}</div>
+    <div class="profile-top">
+      <app-avatar [size]="72" />
+      <div class="profile-actions">
+        <a routerLink="/settings" class="settings-link">⚙ {{ 'nav.settings' | t }}</a>
+        <button type="button" class="logout-btn" (click)="logout()">{{ 'nav.logout' | t }}</button>
+      </div>
+    </div>
 
     <dl class="info">
       <dt>{{ 'profile.name' | t }}</dt>

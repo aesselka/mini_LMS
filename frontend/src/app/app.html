@@ -4,5 +4,7 @@
   <router-outlet />
 </main>
 
-<!-- питомец-капибара внизу экрана -->
-<app-capybara-pet />
+<!-- питомец-капибара: можно выключить в Настройках -->
+@if (prefs.petEnabled()) {
+  <app-capybara-pet />
+}

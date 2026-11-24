@@ -1,0 +1,89 @@
+<section class="card settings">
+  <div class="title-row">
+    <h1>{{ 'settings.title' | t }}</h1>
+    @if (saved()) {
+      <span class="saved" role="status">✓ {{ 'settings.saved' | t }}</span>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() | t }}</p>
+  }
+
+  <!-- ---------- Аватар ---------- -->
+  <h2>{{ 'settings.avatar' | t }}</h2>
+  <div class="avatar-block">
+    <app-avatar [size]="88" />
+
+    <div class="avatar-actions">
+      <p class="hint">{{ 'settings.avatarHint' | t }}</p>
+
+      <div class="presets" role="group" [attr.aria-label]="'settings.avatar' | t">
+        @for (c of colors; track c) {
+          <button
+            type="button"
+            class="preset"
+            [class.selected]="isSelected(c)"
+            [attr.aria-label]="'settings.color.' + c | t"
+            [title]="'settings.color.' + c | t"
+            (click)="choosePreset(c)"
+          >
+            <app-avatar [size]="44" [preview]="presetAvatar(c)" />
+          </button>
+        }
+      </div>
+
+      <div class="buttons">
+        <label class="btn-outline">
+          {{ 'settings.uploadPhoto' | t }}
+          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
+        </label>
+        <button type="button" class="btn-outline" (click)="useInitials()">{{ 'settings.useInitials' | t }}</button>
+      </div>
+      <p class="note">{{ 'settings.avatarNote' | t }}</p>
+    </div>
+  </div>
+
+  <!-- ---------- Тема ---------- -->
+  <h2>{{ 'settings.appearance' | t }}</h2>
+  <div class="segmented" role="group" [attr.aria-label]="'settings.appearance' | t">
+    <button type="button" [class.active]="theme.theme() === 'light'" (click)="theme.set('light')">
+      ☀ {{ 'settings.light' | t }}
+    </button>
+    <button type="button" [class.active]="theme.theme() === 'dark'" (click)="theme.set('dark')">
+      ☾ {{ 'settings.dark' | t }}
+    </button>
+  </div>
+
+  <!-- ---------- Язык ---------- -->
+  <h2>{{ 'settings.language' | t }}</h2>
+  <div class="segmented" role="group" [attr.aria-label]="'settings.language' | t">
+    @for (lang of i18n.languages; track lang) {
+      <button type="button" [class.active]="i18n.lang() === lang" (click)="i18n.use(lang)">
+        {{ 'settings.lang.' + lang | t }}
+      </button>
+    }
+  </div>
+
+  <!-- ---------- Капибара ---------- -->
+  <h2>{{ 'settings.pet' | t }}</h2>
+  <div class="switch-row">
+    <div>
+      <p class="switch-label">{{ 'settings.petShow' | t }}</p>
+      <p class="hint">{{ 'settings.petHint' | t }}</p>
+    </div>
+    <button
+      type="button"
+      class="switch"
+      role="switch"
+      [attr.aria-checked]="prefs.petEnabled()"
+      [attr.aria-label]="'settings.petShow' | t"
+      [class.on]="prefs.petEnabled()"
+      (click)="togglePet()"
+    >
+      <span class="knob"></span>
+    </button>
+  </div>
+
+  <p class="back"><a routerLink="/profile">← {{ 'settings.backToProfile' | t }}</a></p>
+</section>
