@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 
@@ -14,6 +14,11 @@ class Course(models.Model):
 
     # Максимальное количество студентов на курсе
     max_students = models.PositiveSmallIntegerField(default=30)
+
+    # courses you must pass before this one (course - course, many to many)
+    prerequisites = models.ManyToManyField(
+        "self", symmetrical=False, blank=True, related_name="required_for"
+    )
 
     # Настройка весов оценивания (по умолчанию 0.6 и 0.4)
     midterm_weight = models.DecimalField(
@@ -118,6 +123,60 @@ GRADE_POINTS = {
     "D+": 1.33, "D": 1.0,
     "F": 0.0,
 }
+
+# grade C (2.0) or higher = course is passed
+PASS_POINTS = 2.0
+
+
+def has_passed(student, course):
+    enrollment = Enrollment.objects.filter(student=student, course=course).first()
+    if not enrollment:
+        return False
+    return GRADE_POINTS.get(enrollment.grade, 0) >= PASS_POINTS
+
+
+# queue for a full course
+class Waitlist(models.Model):
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="waitlist",
+        limit_choices_to={"role": "student"},
+    )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="waitlist")
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["joined_at", "id"]  # first come - first served
+        constraints = [
+            models.UniqueConstraint(fields=["student", "course"], name="unique_waitlist_student_course"),
+        ]
+
+    @property
+    def position(self):
+        # place in the queue: 1, 2, 3...
+        return Waitlist.objects.filter(course=self.course, id__lte=self.id).count()
+
+    def __str__(self):
+        return f"{self.student} waits for {self.course.code}"
+
+
+def promote_from_waitlist(course):
+    """when a seat is free, first student in the queue is enrolled automatically"""
+    promoted = []
+    with transaction.atomic():
+        while course.enrollments.count() < course.max_students:
+            first = course.waitlist.select_related("student").first()
+            if first is None:
+                break
+            Enrollment.objects.create(student=first.student, course=course)
+            first.delete()
+            Notification.objects.create(
+                recipient=first.student,
+                message=f"Место освободилось: вы записаны на курс {course.code} из листа ожидания.",
+            )
+            promoted.append(first.student)
+    return promoted
 
 
 # one course - many lessons

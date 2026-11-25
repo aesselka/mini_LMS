@@ -6,10 +6,12 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
-from .models import GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Notification, Submission
+from .models import (GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Notification, Submission,
+                     Waitlist, promote_from_waitlist)
 from .permissions import (IsAdmin, IsAdminOrTeacherOrReadOnly, can_manage_course,
                           is_admin, is_teacher, visible_courses)
 from .serializers import (AssignmentSerializer, CourseSerializer, EnrollmentSerializer, NotificationSerializer,
+                          WaitlistSerializer,
                           GradeSerializer, LessonSerializer, MyCourseSerializer,
                           ScoreSerializer, SubmissionSerializer)
 from accounts.permissions import IsStudent
@@ -27,9 +29,9 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrTeacherOrReadOnly]
 
     def get_queryset(self):
-        courses = Course.objects.select_related("teacher").annotate(
-            students_count=Count("enrollments")
-        )
+        courses = (Course.objects.select_related("teacher")
+                   .prefetch_related("prerequisites")
+                   .annotate(students_count=Count("enrollments")))
 
         # search by title, code or teacher
         search = self.request.query_params.get("search")
@@ -41,6 +43,11 @@ class CourseViewSet(viewsets.ModelViewSet):
                 | Q(teacher__last_name__icontains=search)
             )
         return courses
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        # limit was raised - take students from the waitlist
+        promote_from_waitlist(course)
 
     # GET /api/courses/my-standing/
     @action(detail=False, methods=["get"], url_path="my-standing", permission_classes=[IsStudent])
@@ -120,7 +127,10 @@ class EnrollmentViewSet(mixins.ListModelMixin,
         # student can delete only own enrollment
         if not (is_admin(self.request.user) or instance.student == self.request.user):
             raise PermissionDenied("you can't delete this enrollment")
+        course = instance.course
         instance.delete()
+        # seat is free now - first student from the waitlist gets it
+        promote_from_waitlist(course)
 
     # PATCH /api/enrollments/<id>/grade/
     @action(detail=True, methods=["patch"])
@@ -321,3 +331,41 @@ class NotificationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         count = Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
         return Response({"updated": count})
 
+
+
+# /api/waitlist/
+#   GET    /api/waitlist/        - my places in queues (teacher - own courses, admin - all)
+#   POST   /api/waitlist/        - join the queue {"course": 2}
+#   DELETE /api/waitlist/<id>/   - leave the queue
+class WaitlistViewSet(mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.DestroyModelMixin,
+                      viewsets.GenericViewSet):
+    serializer_class = WaitlistSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        items = Waitlist.objects.select_related("student", "course")
+        if is_admin(user):
+            pass
+        elif is_teacher(user):
+            items = items.filter(course__teacher=user)
+        else:
+            items = items.filter(student=user)
+        # filter by course: ?course=2
+        course = self.request.query_params.get("course")
+        if course:
+            items = items.filter(course_id=course)
+        return items
+
+    def perform_create(self, serializer):
+        try:
+            serializer.save()
+        except IntegrityError:
+            raise ValidationError("you are already in the waitlist")
+
+    def perform_destroy(self, instance):
+        if not (is_admin(self.request.user) or instance.student == self.request.user):
+            raise PermissionDenied("you can't remove this waitlist entry")
+        instance.delete()

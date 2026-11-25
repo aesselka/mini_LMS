@@ -107,5 +107,24 @@ class Command(BaseCommand):
                 title=title,
                 defaults={"due_date": due_date}
             )
+
+        # graded works for my-standing demo
+        for student, title, score in SUBMISSIONS:
+            Submission.objects.get_or_create(
+                student=User.objects.get(username=student),
+                assignment=Assignment.objects.get(title=title),
+                defaults={"answer": "done", "score": score},
+            )
+
+        # prerequisites demo: CS201 and CS102 need CS101
+        advanced, _ = Course.objects.get_or_create(code="CS201", defaults={
+            "title": "Advanced Databases", "credits": 5,
+            "teacher": User.objects.get(username="marat"),
+            "midterm_weight": "0.60", "final_weight": "0.40",
+        })
+        cs101 = Course.objects.get(code="CS101")
+        advanced.prerequisites.add(cs101)
+        Course.objects.get(code="CS102").prerequisites.add(cs101)
+
         self.stdout.write(self.style.SUCCESS("Done! Test data with weights and scores loaded. Password for all users: " + PASSWORD))
 

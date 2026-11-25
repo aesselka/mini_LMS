@@ -328,3 +328,115 @@ class MyStandingTest(TestCase):
     def test_needs_login(self):
         r = self.client.get("/api/courses/my-standing/")
         self.assertIn(r.status_code, (401, 403))
+
+
+def make_course(code, teacher, **extra):
+    # weights are passed as text because of the float default in Course
+    return Course.objects.create(code=code, title=code, teacher=teacher,
+                                 midterm_weight="0.60", final_weight="0.40", **extra)
+
+
+class PrerequisitesTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.admin = User.objects.create_user("admin1", password="x", role="admin")
+        self.marat = User.objects.create_user("marat", password="x", role="teacher")
+        self.student = User.objects.create_user("aruzhan", password="x", role="student")
+        self.db = make_course("CS101", self.marat)
+        self.adv = make_course("CS201", self.marat)
+        self.adv.prerequisites.add(self.db)
+
+    def enroll(self, course):
+        self.client.force_authenticate(self.student)
+        return self.client.post("/api/enrollments/", {"course": course.id})
+
+    def test_cannot_enroll_without_prerequisite(self):
+        r = self.enroll(self.adv)
+        self.assertEqual(r.status_code, 400)
+        self.assertIn("you need to pass CS101 first", str(r.json()))
+
+    def test_low_grade_is_not_enough(self):
+        Enrollment.objects.create(student=self.student, course=self.db, grade="D")
+        self.assertEqual(self.enroll(self.adv).status_code, 400)
+
+    def test_enroll_after_passing(self):
+        Enrollment.objects.create(student=self.student, course=self.db, grade="C")
+        self.assertEqual(self.enroll(self.adv).status_code, 201)
+
+    def test_course_shows_prerequisites(self):
+        data = self.client.get(f"/api/courses/{self.adv.id}/").json()
+        self.assertEqual(data["prerequisite_codes"], ["CS101"])
+
+    def test_course_cannot_require_itself(self):
+        self.client.force_authenticate(self.marat)
+        r = self.client.patch(f"/api/courses/{self.db.id}/", {"prerequisites": [self.db.id]}, format="json")
+        self.assertEqual(r.status_code, 400)
+
+
+class WaitlistTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.marat = User.objects.create_user("marat", password="x", role="teacher")
+        self.aliya = User.objects.create_user("aliya", password="x", role="student")
+        self.timur = User.objects.create_user("timur", password="x", role="student")
+        self.daniyar = User.objects.create_user("daniyar", password="x", role="student")
+        self.web = make_course("CS102", self.marat, max_students=1)
+        self.aliya_enrollment = Enrollment.objects.create(student=self.aliya, course=self.web)
+
+    def join(self, student):
+        self.client.force_authenticate(student)
+        return self.client.post("/api/waitlist/", {"course": self.web.id})
+
+    def test_join_full_course_waitlist(self):
+        r = self.join(self.timur)
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(r.json()["position"], 1)
+        self.assertEqual(self.join(self.daniyar).json()["position"], 2)
+
+    def test_cannot_join_twice(self):
+        self.join(self.timur)
+        self.assertEqual(self.join(self.timur).status_code, 400)
+
+    def test_cannot_join_if_free_seats(self):
+        self.web.max_students = 5
+        self.web.save()
+        self.assertEqual(self.join(self.timur).status_code, 400)
+
+    def test_enrolled_student_cannot_join(self):
+        self.assertEqual(self.join(self.aliya).status_code, 400)
+
+    def test_first_in_queue_gets_free_seat(self):
+        self.join(self.timur)
+        self.join(self.daniyar)
+        # aliya leaves the course
+        self.client.force_authenticate(self.aliya)
+        r = self.client.delete(f"/api/enrollments/{self.aliya_enrollment.id}/")
+        self.assertEqual(r.status_code, 204)
+        # timur was first - now enrolled, and got a notification
+        self.assertTrue(Enrollment.objects.filter(student=self.timur, course=self.web).exists())
+        self.assertFalse(Enrollment.objects.filter(student=self.daniyar, course=self.web).exists())
+        self.assertEqual(self.timur.notifications.count(), 1)
+        # daniyar moved to position 1
+        self.client.force_authenticate(self.daniyar)
+        self.assertEqual(self.client.get("/api/waitlist/").json()[0]["position"], 1)
+
+    def test_raising_limit_promotes_students(self):
+        self.join(self.timur)
+        self.join(self.daniyar)
+        self.client.force_authenticate(self.marat)
+        r = self.client.patch(f"/api/courses/{self.web.id}/", {"max_students": 3})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(self.web.enrollments.count(), 3)
+        self.assertEqual(self.web.waitlist.count(), 0)
+
+    def test_student_leaves_waitlist(self):
+        entry_id = self.join(self.timur).json()["id"]
+        r = self.client.delete(f"/api/waitlist/{entry_id}/")
+        self.assertEqual(r.status_code, 204)
+
+    def test_waitlist_needs_prerequisites(self):
+        db = make_course("CS101", self.marat)
+        self.web.prerequisites.add(db)
+        r = self.join(self.timur)
+        self.assertEqual(r.status_code, 400)
+        self.assertIn("CS101", str(r.json()))
