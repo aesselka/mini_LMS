@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Notification, Submission
+from .models import (GRADE_POINTS, Assignment, Course, Enrollment, Lesson, Notification, Submission,
+                     Waitlist, has_passed)
 from .permissions import can_manage_course, is_admin
 
 User = get_user_model()
@@ -24,11 +25,30 @@ class CourseSerializer(serializers.ModelSerializer):
     )
     students_count = serializers.IntegerField(read_only=True)
     seats_left = serializers.SerializerMethodField()
+    # send list of course ids: {"prerequisites": [1, 3]}
+    prerequisites = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Course.objects.all(), required=False
+    )
+    prerequisite_codes = serializers.SerializerMethodField()
+    waitlist_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = ["id", "code", "title", "description", "credits", "max_students",
-                  "seats_left", "teacher", "teacher_id", "students_count", "created_at"]
+                  "seats_left", "waitlist_count", "prerequisites", "prerequisite_codes",
+                  "teacher", "teacher_id", "students_count", "created_at"]
+
+    def get_prerequisite_codes(self, course):
+        return [c.code for c in course.prerequisites.all()]
+
+    def get_waitlist_count(self, course):
+        return course.waitlist.count()
+
+    def validate_prerequisites(self, value):
+        # course can't require itself
+        if self.instance and self.instance in value:
+            raise serializers.ValidationError("course can't be its own prerequisite")
+        return value
 
     def get_seats_left(self, course):
         count = getattr(course, "students_count", None)
@@ -84,11 +104,22 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         if Enrollment.objects.filter(student=attrs["student"], course=attrs["course"]).exists():
             raise serializers.ValidationError("student is already enrolled in this course")
 
-        # check free seats
         course = attrs["course"]
+        check_prerequisites(attrs["student"], course)
+
+        # check free seats
         if course.enrollments.count() >= course.max_students:
             raise serializers.ValidationError("course is full")
         return attrs
+
+
+def check_prerequisites(student, course):
+    # all required courses must be passed with C or higher
+    missing = [c.code for c in course.prerequisites.all() if not has_passed(student, c)]
+    if missing:
+        raise serializers.ValidationError(
+            f"you need to pass {', '.join(missing)} first (grade C or higher)"
+        )
 
 
 class GradeSerializer(serializers.Serializer):
@@ -177,3 +208,31 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = ["id", "message", "is_read", "created_at"]
         read_only_fields = fields
 
+
+
+class WaitlistSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField(read_only=True)
+    course_code = serializers.CharField(source="course.code", read_only=True)
+    position = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Waitlist
+        fields = ["id", "student", "course", "course_code", "position", "joined_at"]
+        read_only_fields = ["joined_at"]
+        validators = []  # checks are done below
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+        course = attrs["course"]
+        if user.role != "student":
+            raise serializers.ValidationError("only students can join the waitlist")
+        if course.enrollments.filter(student=user).exists():
+            raise serializers.ValidationError("you are already enrolled in this course")
+        if Waitlist.objects.filter(student=user, course=course).exists():
+            raise serializers.ValidationError("you are already in the waitlist")
+        # waitlist only for a full course
+        if course.enrollments.count() < course.max_students:
+            raise serializers.ValidationError("course has free seats, just enroll")
+        check_prerequisites(user, course)
+        attrs["student"] = user
+        return attrs
