@@ -1,11 +1,13 @@
 import { Component, effect, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { Assistant } from './components/assistant/assistant';
 import { CapybaraPet } from './components/capybara-pet/capybara-pet';
 import { CommandPalette } from './components/command-palette/command-palette';
 import { Header } from './components/header/header';
 import { Sidebar } from './components/sidebar/sidebar';
 import { Toaster } from './components/toaster/toaster';
+import { AssistantService } from './services/assistant.service';
 import { AchievementsService } from './services/achievements.service';
 import { AuthService } from './services/auth.service';
 import { NotificationsService } from './services/notifications.service';
@@ -13,7 +15,7 @@ import { PreferencesService } from './services/preferences.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Sidebar, CommandPalette, Toaster, CapybaraPet],
+  imports: [RouterOutlet, Header, Sidebar, CommandPalette, Toaster, CapybaraPet, Assistant],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -22,6 +24,7 @@ export class App {
   protected prefs = inject(PreferencesService);
   private notifications = inject(NotificationsService);
   private achievements = inject(AchievementsService);
+  private assistant = inject(AssistantService);
 
   constructor() {
     // вошёл — получаем уведомления и считаем достижения; вышел — всё очищаем
@@ -32,6 +35,7 @@ export class App {
       } else {
         this.notifications.stop();
         this.achievements.reset();
+        this.assistant.reset(); // чужой пользователь не увидит прошлый чат
       }
     });
 

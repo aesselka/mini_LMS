@@ -1,0 +1,114 @@
+@if (chat.open()) {
+  <section class="panel" role="dialog" [attr.aria-label]="'capy.title' | t">
+    <!-- шапка — горячий источник, в котором сидит Капи -->
+    <header class="onsen">
+      <span class="steam" aria-hidden="true"><i></i><i></i><i></i></span>
+      <app-capy-scene class="bather" [size]="96" />
+      <span class="water" aria-hidden="true"></span>
+      <div class="who">
+        <strong>{{ 'capy.title' | t }}</strong>
+        <span>{{ 'capy.subtitle' | t }}</span>
+      </div>
+      <div class="head-actions">
+        @if (chat.messages().length) {
+          <button type="button" class="icon-btn" (click)="chat.clear()" [title]="'capy.clear' | t">
+            <app-icon name="trash" [size]="18" />
+          </button>
+        }
+        <button type="button" class="icon-btn" (click)="chat.close()" [title]="'common.close' | t">
+          <app-icon name="x" [size]="18" />
+        </button>
+      </div>
+    </header>
+
+    <div class="messages" #list aria-live="polite">
+      <div class="msg bot">
+        <app-capy-scene class="face" [size]="30" />
+        <div class="bubble">{{ greeting() }}</div>
+      </div>
+
+      @for (m of chat.messages(); track $index) {
+        @if (m.role === 'user') {
+          <div class="msg me">
+            <div class="bubble">{{ m.text }}</div>
+          </div>
+        } @else {
+          <div class="msg bot">
+            <app-capy-scene class="face" [size]="30" />
+            <div class="bot-col">
+              <div class="bubble" [class.error]="m.error">{{ m.text }}</div>
+              @if (m.links?.length) {
+                <div class="links">
+                  @for (link of m.links; track link.url) {
+                    <button type="button" class="link-chip" (click)="go(link)">{{ link.label }}</button>
+                  }
+                </div>
+              }
+              @if (m.source === 'ai') {
+                <span class="tag">✨ {{ 'capy.ai' | t }}</span>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      @if (chat.loading()) {
+        <div class="msg bot">
+          <app-capy-scene class="face" [size]="30" />
+          <div class="bubble typing">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            {{ 'capy.thinking' | t }}
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (!chat.messages().length) {
+      <div class="suggestions">
+        @for (q of suggestions(); track q.text) {
+          <button type="button" class="chip" (click)="send(q.text)">
+            <span aria-hidden="true">{{ q.icon }}</span>{{ q.text }}
+          </button>
+        }
+      </div>
+    }
+
+    <form class="composer" (ngSubmit)="send()">
+      <div class="field">
+        <textarea
+          #field
+          name="draft"
+          rows="1"
+          maxlength="500"
+          [(ngModel)]="draft"
+          (keydown)="onKeydown($event)"
+          [placeholder]="'capy.placeholder' | t"
+          [attr.aria-label]="'capy.placeholder' | t"
+        ></textarea>
+        <button type="submit" class="send" [disabled]="chat.loading() || !draft.trim()" [title]="'capy.send' | t">
+          <app-icon name="send" [size]="17" />
+        </button>
+      </div>
+    </form>
+  </section>
+}
+
+<button
+  type="button"
+  class="fab"
+  [class.active]="chat.open()"
+  (click)="chat.toggle()"
+  [attr.aria-label]="'capy.ask' | t"
+  [title]="'capy.ask' | t"
+>
+  @if (chat.open()) {
+    <app-icon name="x" [size]="24" />
+  } @else {
+    <app-capy-scene class="fab-capy" [size]="58" />
+    <span class="water" aria-hidden="true"></span>
+  }
+</button>
+
+@if (showHint() && !chat.open()) {
+  <button type="button" class="capy-hint" (click)="chat.openChat()">{{ 'capy.hint' | t }}</button>
+}

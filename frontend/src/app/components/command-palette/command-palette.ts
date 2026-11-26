@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, computed, effect, inject, signal, 
 import { Router } from '@angular/router';
 import { Course } from '../../catalog/course';
 import { CourseService } from '../../catalog/course-service';
+import { AssistantService } from '../../services/assistant.service';
 import { AuthService } from '../../services/auth.service';
 import { I18nService, Lang } from '../../services/i18n.service';
 import { LayoutService } from '../../services/layout.service';
@@ -37,6 +38,7 @@ export class CommandPalette {
   private i18n = inject(I18nService);
   private theme = inject(ThemeService);
   private prefs = inject(PreferencesService);
+  private assistant = inject(AssistantService);
 
   private input = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
@@ -101,6 +103,13 @@ export class CommandPalette {
       ['kz', 'Қазақша'],
     ];
     const actions: PaletteItem[] = [
+      {
+        group: 'actions',
+        label: t('capy.ask'),
+        icon: 'chat',
+        search: 'ai ии капи capy капибара помощник assistant көмекші chat чат',
+        run: () => this.assistant.openChat(),
+      },
       {
         group: 'actions',
         label: t(this.theme.theme() === 'dark' ? 'theme.toLight' : 'theme.toDark'),

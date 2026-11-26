@@ -206,7 +206,7 @@ REST_FRAMEWORK = {
 
 # ---------- Email и сброс пароля ----------
 # Gmail отправляет только от имени своего же адреса
-DEFAULT_FROM_EMAIL = f'Mini LMS <{MAIL_FROM}>' if MAIL_FROM else 'Mini LMS <no-reply@mini-lms.local>'
+DEFAULT_FROM_EMAIL = f'CapyClass <{MAIL_FROM}>' if MAIL_FROM else 'CapyClass <no-reply@capyclass.local>'
 # Адрес фронтенда — для ссылки «сбросить пароль» в письме
 FRONTEND_URL = 'http://localhost:4200'
 # Ссылка для сброса пароля действует 1 час
