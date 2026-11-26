@@ -24,14 +24,14 @@ class Course(models.Model):
     midterm_weight = models.DecimalField(
         max_digits=3,
         decimal_places=2,
-        default=0.60,
+        default=Decimal("0.60"),  # Decimal, а не float: 0.60 как float не проходит full_clean()
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Вес Midterm",
     )
     final_weight = models.DecimalField(
         max_digits=3,
         decimal_places=2,
-        default=0.40,
+        default=Decimal("0.40"),
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Вес Final",
     )
