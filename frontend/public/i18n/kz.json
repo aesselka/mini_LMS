@@ -12,6 +12,14 @@
   "fields.lastName": "Тегі",
   "fields.role": "Рөлі",
 
+  "profile.edit": "Профильді өңдеу",
+  "profile.save": "Сақтау",
+  "profile.cancel": "Бас тарту",
+  "profile.overview": "Жүйеге шолу",
+  "profile.students": "Студенттер",
+  "profile.teachers": "Мұғалімдер",
+  "profile.courses": "Курстар",
+
   "roles.student": "Студент",
   "roles.teacher": "Оқытушы",
   "roles.admin": "Әкімші",

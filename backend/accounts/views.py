@@ -14,6 +14,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .serializers import RegisterSerializer, UserSerializer
 from .permissions import IsAdminRole
+from courses.models import Course
 
 User = get_user_model()
 
@@ -57,6 +58,15 @@ class UserProfileView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    def patch(self, request):
+        allowed = {k: v for k, v in request.data.items()
+                   if k in ('first_name', 'last_name', 'email')}
+        serializer = UserSerializer(request.user, data=allowed, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 
 # ---------- Сброс пароля ----------
@@ -145,3 +155,14 @@ class UserListView(APIView):
     def get(self, request):
         users = User.objects.all()
         return Response(UserSerializer(users, many=True).data, status=status.HTTP_200_OK)
+
+class AdminStatsView(APIView):
+    permission_classes = [IsAdminRole]
+
+    def get(self, request):
+        return Response({
+            'students': User.objects.filter(role='student').count(),
+            'teachers': User.objects.filter(role='teacher').count(),
+            'admins': User.objects.filter(role='admin').count(),
+            'courses': Course.objects.count(),
+        }, status=status.HTTP_200_OK)
