@@ -62,6 +62,17 @@ export class AuthService {
       }),
     );
   }
+  
+
+    // Обновляет имя, фамилию и email текущего пользователя (PATCH /api/auth/me/)
+  updateProfile(data: { first_name: string; last_name: string; email: string }): Observable<User> {
+    return this.http.patch<User>(`${API_URL}/auth/me/`, data).pipe(
+      tap((user) => {
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+        this.currentUser.set(user);
+      }),
+    );
+  }
 
   // Сброс пароля, шаг 1: отправить письмо со ссылкой (POST /api/auth/password-reset/)
   requestPasswordReset(email: string): Observable<{ detail: string }> {

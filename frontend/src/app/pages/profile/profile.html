@@ -28,6 +28,29 @@
       <dd><span class="badge">{{ 'roles.' + user.role | t }}</span></dd>
     </dl>
 
+     @if (!editing()) {
+      <button type="button" style="margin-top: 12px;" (click)="startEdit()">{{ 'profile.edit' | t }}</button>
+    } @else {
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+        <label>{{ 'fields.firstName' | t }}
+          <input type="text" style="width: 100%;" [value]="firstName()" (input)="firstName.set($any($event.target).value)" />
+        </label>
+        <label>{{ 'fields.lastName' | t }}
+          <input type="text" style="width: 100%;" [value]="lastName()" (input)="lastName.set($any($event.target).value)" />
+        </label>
+        <label>{{ 'fields.email' | t }}
+          <input type="email" style="width: 100%;" [value]="email()" (input)="email.set($any($event.target).value)" />
+        </label>
+        @if (saveError()) {
+          <p class="error" role="alert">{{ saveError() }}</p>
+        }
+        <div style="display: flex; gap: 8px;">
+          <button type="button" [disabled]="saving()" (click)="save()">{{ 'profile.save' | t }}</button>
+          <button type="button" [disabled]="saving()" (click)="cancelEdit()">{{ 'profile.cancel' | t }}</button>
+        </div>
+      </div>
+    }
+
     <!-- Студенческий блок: симулятор, GPA, Кредиты, Транскрипт -->
     @if (user.role === 'student') {
 
@@ -97,6 +120,31 @@
         }
       </div>
     }
+  
+  <!-- Блок админа: статистика системы -->
+   @if (user.role === 'admin') {
+    <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+      <h3 style="margin-bottom: 12px; font-size: 16px;">{{ 'profile.overview' | t }}</h3>
+      @if (adminStats(); as stats) {
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <div style="background: var(--bg); padding: 14px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid var(--border);">
+            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">{{ 'profile.students' | t }}</div>
+            <div style="font-size: 22px; font-weight: bold; color: var(--primary); margin-top: 4px;">{{ stats.students }}</div>
+          </div>
+          <div style="background: var(--bg); padding: 14px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid var(--border);">
+            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">{{ 'profile.teachers' | t }}</div>
+            <div style="font-size: 22px; font-weight: bold; color: var(--primary); margin-top: 4px;">{{ stats.teachers }}</div>
+          </div>
+          <div style="background: var(--bg); padding: 14px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid var(--border);">
+            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">{{ 'profile.courses' | t }}</div>
+            <div style="font-size: 22px; font-weight: bold; color: var(--primary); margin-top: 4px;">{{ stats.courses }}</div>
+          </div>
+        </div>
+      } @else {
+        <p style="color: var(--text-muted); font-size: 14px;">No statistics available.</p>
+      }
+    </div>
+  }
   } @else {
     <p>{{ 'common.loading' | t }}</p>
   }

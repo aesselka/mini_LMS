@@ -12,6 +12,14 @@
   "fields.lastName": "Last name",
   "fields.role": "Role",
 
+  "profile.edit": "Edit profile",
+  "profile.save": "Save",
+  "profile.cancel": "Cancel",
+  "profile.overview": "System Overview",
+  "profile.students": "Students",
+  "profile.teachers": "Teachers",
+  "profile.courses": "Courses",
+
   "roles.student": "Student",
   "roles.teacher": "Teacher",
   "roles.admin": "Administrator",

@@ -12,6 +12,14 @@
   "fields.lastName": "Фамилия",
   "fields.role": "Роль",
 
+  "profile.edit": "Редактировать профиль",
+  "profile.save": "Сохранить",
+  "profile.cancel": "Отмена",
+  "profile.overview": "Обзор системы",
+  "profile.students": "Студенты",
+  "profile.teachers": "Преподаватели",
+  "profile.courses": "Курсы",
+
   "roles.student": "Студент",
   "roles.teacher": "Преподаватель",
   "roles.admin": "Администратор",
