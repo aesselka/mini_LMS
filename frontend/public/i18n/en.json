@@ -106,6 +106,9 @@
   "forgot.text": "Enter the email you used to register. We will send you a link to set a new password.",
   "forgot.submit": "Send link",
   "forgot.sent": "If an account with this email exists, we have sent it a link to reset the password. Check your inbox.",
+  "forgot.devTitle": "Developer mode",
+  "forgot.devText": "No real email is needed: open the reset link right here. This button is hidden when the site runs in production.",
+  "forgot.devOpen": "Open reset link",
   "forgot.backToLogin": "Back to login",
 
   "reset.title": "New password",

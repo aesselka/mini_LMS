@@ -18,6 +18,7 @@ export class ForgotPassword {
   error = signal(''); // ключ перевода
   sent = signal(false);
   loading = signal(false);
+  devLink = signal(''); // ссылка сброса в режиме разработки (без почты)
 
   submit(): void {
     this.error.set('');
@@ -35,8 +36,9 @@ export class ForgotPassword {
     this.loading.set(true);
     this.auth.requestPasswordReset(email).subscribe({
       // Сообщение одинаковое, есть такой email или нет — так нельзя узнать чужие email
-      next: () => {
+      next: (res) => {
         this.loading.set(false);
+        this.devLink.set(res.dev_reset_link ?? '');
         this.sent.set(true);
       },
       error: (err: HttpErrorResponse) => {

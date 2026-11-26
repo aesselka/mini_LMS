@@ -64,8 +64,9 @@ export class AuthService {
   }
 
   // Сброс пароля, шаг 1: отправить письмо со ссылкой (POST /api/auth/password-reset/)
-  requestPasswordReset(email: string): Observable<{ detail: string }> {
-    return this.http.post<{ detail: string }>(`${API_URL}/auth/password-reset/`, { email });
+  // dev_reset_link приходит только в режиме разработки (DEBUG=True на бэкенде)
+  requestPasswordReset(email: string): Observable<{ detail: string; dev_reset_link?: string }> {
+    return this.http.post<{ detail: string; dev_reset_link?: string }>(`${API_URL}/auth/password-reset/`, { email });
   }
 
   // Сброс пароля, шаг 2: новый пароль по ссылке из письма (POST /api/auth/password-reset/confirm/)
