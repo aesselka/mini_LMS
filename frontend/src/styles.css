@@ -415,3 +415,25 @@ select {
   color: #6b7280;
   font-size: 0.875rem;
 }
+
+/* Сброс пароля без почты (только режим разработки) */
+.dev-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px dashed var(--warning);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.dev-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+.dev-text {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.dev-box .btn {
+  display: inline-block;
+  text-decoration: none;
+}
