@@ -19,6 +19,7 @@ User = get_user_model()
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
+    throttle_scope = 'register'
 
     def post(self, request):
         # use RegisterSerializer
@@ -37,6 +38,7 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    throttle_scope = 'login' 
 
     def post(self, request):
         username = request.data.get("username")
@@ -70,6 +72,7 @@ class PasswordResetRequestView(APIView):
     В режиме разработки письмо печатается в терминал runserver (EMAIL_BACKEND = console).
     """
     permission_classes = [AllowAny]
+    throttle_scope = 'password_reset'
 
     def post(self, request):
         email = (request.data.get("email") or "").strip()

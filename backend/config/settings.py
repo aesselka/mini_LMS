@@ -145,6 +145,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'login': '5/min',           # максимум 5 попыток входа в минуту с одного IP (защита от брутфорса)
+        'register': '3/min',        # максимум 3 регистрации в минуту
+        'password_reset': '3/min',  # максимум 3 запроса на сброс пароля в минуту (защита от спама)
+    }
 }
 
 # ---------- Email и сброс пароля ----------
