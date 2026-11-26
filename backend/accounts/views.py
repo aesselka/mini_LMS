@@ -76,22 +76,46 @@ class PasswordResetRequestView(APIView):
         if not email:
             return Response({"email": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
+        dev_link = None
         for user in User.objects.filter(email__iexact=email, is_active=True):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
             link = f"{settings.FRONTEND_URL}/reset-password?uid={uid}&token={token}"
-            send_mail(
-                subject="Mini LMS: password reset",
-                message=(
-                    f"Hello, {user.username}!\n\n"
-                    f"To set a new password, open this link:\n{link}\n\n"
-                    "If you did not request a password reset, just ignore this email."
-                ),
-                from_email=None,  # DEFAULT_FROM_EMAIL
-                recipient_list=[user.email],
+            dev_link = link
+            text = (
+                f"Hello, {user.username}!\n\n"
+                f"To set a new password, open this link:\n{link}\n\n"
+                "The link is valid for 1 hour.\n"
+                "If you did not request a password reset, just ignore this email."
             )
+            html = f"""
+<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:16px">
+  <h2 style="margin:0 0 8px;color:#4f46e5">Mini LMS</h2>
+  <p>Hello, <b>{user.username}</b>!</p>
+  <p>We received a request to reset your password. Click the button to set a new one:</p>
+  <p style="text-align:center;margin:24px 0">
+    <a href="{link}" style="background:#4f46e5;color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:bold">Reset password</a>
+  </p>
+  <p style="color:#6b7280;font-size:13px">The link is valid for 1 hour. If you did not request a password reset, just ignore this email.</p>
+</div>"""
+            try:
+                send_mail(
+                    subject="Mini LMS: password reset",
+                    message=text,
+                    html_message=html,
+                    from_email=None,  # DEFAULT_FROM_EMAIL
+                    recipient_list=[user.email],
+                )
+            except Exception as exc:
+                # Ошибку видно в терминале runserver (неверный пароль, Mailpit не запущен...)
+                print(f"[password reset] email was not sent: {exc}")
 
-        return Response({"detail": "If an account with this email exists, a reset link has been sent."})
+        data = {"detail": "If an account with this email exists, a reset link has been sent."}
+        # Только в режиме разработки (DEBUG=True): отдаём ссылку фронтенду,
+        # чтобы проверять сброс без почты. В продакшене (DEBUG=False) её нет.
+        if settings.DEBUG and dev_link:
+            data["dev_reset_link"] = dev_link
+        return Response(data)
 
 
 class PasswordResetConfirmView(APIView):

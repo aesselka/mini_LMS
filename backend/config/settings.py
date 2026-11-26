@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+import os
 import secrets
 
 from pathlib import Path
@@ -126,11 +127,67 @@ STATIC_URL = 'static/'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# Логин и пароль приложения Gmail берутся ТОЛЬКО из переменных окружения
+# (export EMAIL_USER=... и export EMAIL_PASSWORD=... перед runserver).
+# Resend (через HTTPS): export RESEND_API_KEY=re_...
+# Без почты можно включить Mailpit: export MAILPIT=1
+# В код пароль не пишем: репозиторий публичный.
+GMAIL_USER = os.environ.get('EMAIL_USER', '')
+GMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
+# Почтовый сервер: по умолчанию Gmail. Для Mail.ru / Яндекса / Brevo задайте EMAIL_HOST
+# (и при необходимости EMAIL_PORT, EMAIL_FROM).
+MAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+MAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+MAIL_FROM = os.environ.get(
+    'EMAIL_FROM', 'onboarding@resend.dev' if RESEND_API_KEY else GMAIL_USER
+)
+
+if RESEND_API_KEY:
+    # Resend через HTTPS API (работает, даже если SMTP заблокирован)
+    MAILERS = {
+        'default': {
+            'BACKEND': 'config.resend_backend.ResendEmailBackend',
+            'OPTIONS': {
+                'api_key': RESEND_API_KEY,
+            },
+        },
+    }
+elif GMAIL_USER and GMAIL_PASSWORD:
+    # Настоящие письма через SMTP (порт 465 — SSL, иначе TLS)
+    MAILERS = {
+        'default': {
+            'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+            'OPTIONS': {
+                'host': MAIL_HOST,
+                'port': MAIL_PORT,
+                'use_ssl': MAIL_PORT == 465,
+                'use_tls': MAIL_PORT != 465,
+                'username': GMAIL_USER,
+                'password': GMAIL_PASSWORD,
+                'timeout': 15,
+            },
+        },
+    }
+elif os.environ.get('MAILPIT') == '1':
+    # Mailpit — «фейковая почта» на этом компьютере: письма видно на http://localhost:8025
+    MAILERS = {
+        'default': {
+            'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+            'OPTIONS': {
+                'host': 'localhost',
+                'port': 1025,
+                'timeout': 5,
+            },
+        },
+    }
+else:
+    # Ничего не задано: письмо просто печатается в терминале
+    MAILERS = {
+        'default': {
+            'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        },
+    }
 
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -148,7 +205,8 @@ REST_FRAMEWORK = {
 }
 
 # ---------- Email и сброс пароля ----------
-DEFAULT_FROM_EMAIL = 'Mini LMS <no-reply@mini-lms.local>'
+# Gmail отправляет только от имени своего же адреса
+DEFAULT_FROM_EMAIL = f'Mini LMS <{MAIL_FROM}>' if MAIL_FROM else 'Mini LMS <no-reply@mini-lms.local>'
 # Адрес фронтенда — для ссылки «сбросить пароль» в письме
 FRONTEND_URL = 'http://localhost:4200'
 # Ссылка для сброса пароля действует 1 час
