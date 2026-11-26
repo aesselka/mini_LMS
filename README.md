@@ -1,6 +1,6 @@
-# Mini LMS
+# CapyClass
 
-**Mini LMS** — is a web-based learning management system that allows students, teachers, and administrators to manage courses, enrollments, and academic performance in one place.
+**CapyClass** — is a web-based learning management system that allows students, teachers, and administrators to manage courses, enrollments, and academic performance in one place.
 
 ## Built With
 

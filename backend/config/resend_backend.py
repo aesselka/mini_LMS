@@ -49,7 +49,7 @@ class ResendEmailBackend(BaseEmailBackend):
                 headers={
                     'Authorization': f'Bearer {self.api_key}',
                     'Content-Type': 'application/json',
-                    'User-Agent': 'mini-lms/1.0',
+                    'User-Agent': 'capyclass/1.0',
                 },
                 method='POST',
             )

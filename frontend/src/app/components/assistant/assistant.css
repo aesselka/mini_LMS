@@ -1,0 +1,491 @@
+/* Палитра Капи: горячий источник, мандарин, шерсть */
+:host {
+  --onsen-steam: #e6f5f2;
+  --onsen-ink: #14524e;
+  --onsen-water: #3fb0a8;
+  --onsen-deep: #2f948d;
+  --onsen-foam: #bfeee9;
+  --sand: #f6ebdd;
+  --sand-line: #ead8c2;
+  --sand-ink: #3b2416;
+  --mandarin: #f28c28;
+}
+
+:host-context([data-theme='dark']) {
+  --onsen-steam: #183836;
+  --onsen-ink: #d4f3ef;
+  --sand: #2f2620;
+  --sand-line: #43362c;
+  --sand-ink: #f1e4d4;
+}
+
+/* ---------- кнопка в углу ---------- */
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 85;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--onsen-steam);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(20, 82, 78, 0.35);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.fab:hover {
+  transform: translateY(-2px) rotate(-4deg);
+}
+
+.fab .water {
+  height: 16px;
+}
+
+.fab-capy {
+  position: relative;
+  z-index: 1;
+  margin-bottom: -4px;
+}
+
+.fab.active {
+  align-items: center;
+  background: var(--onsen-deep);
+}
+
+.fab:focus-visible,
+.icon-btn:focus-visible,
+.chip:focus-visible,
+.link-chip:focus-visible,
+.send:focus-visible {
+  outline: 3px solid var(--mandarin);
+  outline-offset: 2px;
+}
+
+.capy-hint {
+  position: fixed;
+  right: 98px;
+  bottom: 40px;
+  z-index: 85;
+  padding: 8px 13px;
+  border: 1px solid var(--sand-line);
+  border-radius: 16px 16px 4px 16px;
+  background: var(--sand);
+  color: var(--sand-ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+
+/* ---------- окно чата ---------- */
+.panel {
+  position: fixed;
+  right: 24px;
+  bottom: 100px;
+  z-index: 85;
+  display: flex;
+  flex-direction: column;
+  width: 384px;
+  height: min(600px, calc(100vh - 124px));
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transform-origin: bottom right;
+  animation: open 0.2s ease-out;
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+/* шапка: пар над водой, Капи сидит в источнике */
+.onsen {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-end;
+  gap: 10px;
+  min-height: 112px;
+  padding: 0 10px 0 14px;
+  background: var(--onsen-steam);
+  color: var(--onsen-ink);
+}
+
+/* вода: перекрывает подбородок Капи — будто она сидит в источнике */
+.water {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  height: 20px;
+  background: linear-gradient(var(--onsen-foam) 0 4px, var(--onsen-water) 4px 13px, var(--onsen-deep) 13px);
+}
+
+/* пиксельные гребешки волн */
+.water::before {
+  content: '';
+  position: absolute;
+  inset: -4px 0 auto 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--onsen-foam) 0 8px, transparent 8px 20px);
+}
+
+.bather {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  margin-bottom: 5px;
+}
+
+.who {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding-bottom: 28px;
+}
+
+.who strong {
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.who span {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.head-actions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-self: flex-start;
+  gap: 2px;
+  padding-top: 10px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--onsen-ink);
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: rgba(63, 176, 168, 0.18);
+}
+
+/* три пиксельных облачка пара */
+.steam {
+  position: absolute;
+  left: 8px;
+  bottom: 20px;
+  z-index: 2;
+  width: 110px;
+  height: 10px;
+}
+
+.steam i {
+  position: absolute;
+  bottom: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--onsen-foam);
+  opacity: 0;
+  animation: steam 3.6s ease-in infinite;
+}
+
+.steam i:nth-child(1) {
+  left: 6px;
+}
+
+.steam i:nth-child(2) {
+  left: 96px;
+  animation-delay: 1.2s;
+}
+
+.steam i:nth-child(3) {
+  left: 2px;
+  animation-delay: 2.4s;
+}
+
+@keyframes steam {
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(3px, -46px);
+  }
+}
+
+/* ---------- сообщения ---------- */
+.messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 14px;
+  overflow-y: auto;
+}
+
+.msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.msg.me {
+  justify-content: flex-end;
+}
+
+.face {
+  flex-shrink: 0;
+}
+
+.bot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.bubble {
+  max-width: 284px;
+  padding: 10px 13px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.bot .bubble {
+  border: 1px solid var(--sand-line);
+  border-bottom-left-radius: 4px;
+  background: var(--sand);
+  color: var(--sand-ink);
+}
+
+.me .bubble {
+  border-bottom-right-radius: 4px;
+  background: var(--onsen-deep);
+  color: #fff;
+}
+
+.bot .bubble.error {
+  border-color: var(--error-border);
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.link-chip {
+  padding: 5px 11px;
+  border: 1.5px solid var(--onsen-deep);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--onsen-deep);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:host-context([data-theme='dark']) .link-chip {
+  border-color: var(--onsen-water);
+  color: var(--onsen-foam);
+}
+
+.link-chip:hover {
+  background: rgba(63, 176, 168, 0.14);
+}
+
+.tag {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-style: italic;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.dots i {
+  width: 5px;
+  height: 5px;
+  background: var(--mandarin);
+  animation: hop 1s infinite;
+}
+
+.dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes hop {
+  30% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: none;
+  }
+}
+
+/* ---------- быстрые вопросы ---------- */
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 14px 12px 52px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--mandarin);
+  background: var(--sand);
+}
+
+/* ---------- поле ввода ---------- */
+.composer {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.field {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 5px 5px 5px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface-2);
+}
+
+.field:focus-within {
+  border-color: var(--onsen-water);
+}
+
+.field textarea {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  max-height: 110px;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  field-sizing: content;
+}
+
+.send {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: var(--mandarin);
+  color: #fff;
+  cursor: pointer;
+}
+
+.send:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .steam i,
+  .dots i {
+    animation: none;
+  }
+}
+
+/* ---------- телефон: чат на весь экран ---------- */
+@media (max-width: 640px) {
+  .fab {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .fab.active {
+    display: none;
+  }
+
+  .capy-hint {
+    right: 90px;
+    bottom: 32px;
+  }
+
+  .panel {
+    inset: 0;
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+  }
+
+  .bubble {
+    max-width: 76vw;
+  }
+}

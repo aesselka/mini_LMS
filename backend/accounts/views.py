@@ -100,7 +100,7 @@ class PasswordResetRequestView(APIView):
             )
             html = f"""
 <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:16px">
-  <h2 style="margin:0 0 8px;color:#4f46e5">Mini LMS</h2>
+  <h2 style="margin:0 0 8px;color:#4f46e5">CapyClass</h2>
   <p>Hello, <b>{user.username}</b>!</p>
   <p>We received a request to reset your password. Click the button to set a new one:</p>
   <p style="text-align:center;margin:24px 0">
@@ -110,7 +110,7 @@ class PasswordResetRequestView(APIView):
 </div>"""
             try:
                 send_mail(
-                    subject="Mini LMS: password reset",
+                    subject="CapyClass: password reset",
                     message=text,
                     html_message=html,
                     from_email=None,  # DEFAULT_FROM_EMAIL

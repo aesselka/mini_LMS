@@ -1,6 +1,8 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
+from .assistant import assistant_chat
+
 from .views import (AssignmentViewSet, CourseViewSet, EnrollmentViewSet, LessonViewSet, NotificationViewSet,
                     SubmissionViewSet, WaitlistViewSet, my_courses, stats, transcript)
 
@@ -17,4 +19,5 @@ urlpatterns = [
     path("my-courses/", my_courses, name="my-courses"),
     path("stats/", stats, name="stats"),
     path("transcript/", transcript, name="transcript"),
+    path("assistant/chat/", assistant_chat, name="assistant-chat"),
 ] + router.urls

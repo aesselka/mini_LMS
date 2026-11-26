@@ -256,6 +256,23 @@
   "errors.unknown": "Something went wrong. Please try again.",
   "errors.passwordNumeric": "Password cannot consist of digits only.",
   "errors.usernameTaken": "This username is already taken.",
-  "errors.passwordWeak": "Password is too weak."
-}
+  "errors.passwordWeak": "Password is too weak.",
 
+  "capy.title": "Capy",
+  "capy.subtitle": "Your capybara assistant",
+  "capy.ask": "Ask Capy",
+  "capy.hint": "Ask me! 🤎",
+  "capy.hello": "Hi, {name}! 🤎 I'm Capy. I know your courses, grades and deadlines. What would you like to know?",
+  "capy.placeholder": "Ask a question…",
+  "capy.send": "Send",
+  "capy.clear": "Clear chat",
+  "capy.thinking": "Capy is thinking…",
+  "capy.error": "Oops, I couldn't reach the server 😔 Check that the backend is running and try again.",
+  "capy.ai": "answered by AI",
+  "capy.q.courses": "My courses",
+  "capy.q.gpa": "What is my GPA?",
+  "capy.q.deadlines": "Upcoming deadlines",
+  "capy.q.final": "How much do I need on the final?",
+  "capy.q.who": "What can you do?",
+  "capy.q.grade": "How do I set grades?"
+}
